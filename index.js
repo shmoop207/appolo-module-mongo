@@ -1,0 +1,23 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const appolo_mongo_1 = require("appolo-mongo");
+exports.Schema = appolo_mongo_1.Schema;
+exports.schema = appolo_mongo_1.schema;
+exports.prop = appolo_mongo_1.prop;
+exports.staticMethod = appolo_mongo_1.staticMethod;
+exports.virtual = appolo_mongo_1.virtual;
+exports.method = appolo_mongo_1.method;
+exports.pre = appolo_mongo_1.pre;
+exports.post = appolo_mongo_1.post;
+exports.index = appolo_mongo_1.index;
+const decorator_1 = require("./module/src/decorator");
+exports.model = decorator_1.model;
+exports.injectModel = decorator_1.injectModel;
+const mongoModule_1 = require("./module/mongoModule");
+exports.MongoModule = mongoModule_1.MongoModule;
+const modelRepository_1 = require("./module/src/modelRepository");
+exports.ModelRepository = modelRepository_1.ModelRepository;
+const baseCrudManager_1 = require("./module/src/baseCrudManager");
+exports.BaseCrudManager = baseCrudManager_1.BaseCrudManager;
+exports.mongoose = require("mongoose");
+//# sourceMappingURL=index.js.map
