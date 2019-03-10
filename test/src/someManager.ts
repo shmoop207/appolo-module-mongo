@@ -1,11 +1,11 @@
 import {define,singleton,inject} from 'appolo'
 import {Test} from "./testModel";
-import {ModelType,injectModel} from "../../index";
+import {Model,injectModel} from "../../index";
 
 @define()
 @singleton()
 export class SomeManager  {
-    @injectModel(Test) testModel: ModelType<Test> & typeof Test
+    @injectModel(Test) testModel: Model<Test> & typeof Test
 
     test(){
 

@@ -2,7 +2,7 @@
 import Q = require('bluebird');
 import _ = require('lodash');
 import {mongoose} from "../..";
-import {DocType, ModelType} from "appolo-mongo";
+import {Doc, Model} from "appolo-mongo";
 import {inject} from "appolo";
 import {ILogger} from "@appolo/logger";
 import {BaseCrudItem, CrudItemParams, GetAllParams} from "./interfaces";
@@ -13,10 +13,10 @@ export abstract class BaseCrudManager<K extends BaseCrudItem> {
 
     @inject() logger: ILogger;
 
-    protected abstract get model(): ModelType<K>
+    protected abstract get model(): Model<K>
 
 
-    public async getOne(id: string, fields?: string | CrudItemParams<K>, populate?: mongoose.ModelPopulateOptions | mongoose.ModelPopulateOptions[]): Promise<DocType<K>> {
+    public async getOne(id: string, fields?: string | CrudItemParams<K>, populate?: mongoose.ModelPopulateOptions | mongoose.ModelPopulateOptions[]): Promise<Doc<K>> {
         try {
 
             let item = await this.model.findById(id)
@@ -35,7 +35,7 @@ export abstract class BaseCrudManager<K extends BaseCrudItem> {
         }
     }
 
-    public async findOne(filter: string | Object, fields?: string | CrudItemParams<K>, populate?: mongoose.ModelPopulateOptions | mongoose.ModelPopulateOptions[]): Promise<DocType<K>> {
+    public async findOne(filter: string | Object, fields?: string | CrudItemParams<K>, populate?: mongoose.ModelPopulateOptions | mongoose.ModelPopulateOptions[]): Promise<Doc<K>> {
 
         try {
 
@@ -54,7 +54,7 @@ export abstract class BaseCrudManager<K extends BaseCrudItem> {
         }
     }
 
-    public async getAll(options: GetAllParams<Partial<K>> = {}): Promise<{ results: DocType<K>[], count: number }> {
+    public async getAll(options: GetAllParams<Partial<K>> = {}): Promise<{ results: Doc<K>[], count: number }> {
 
         try {
             let p1 = this.model.find({})
@@ -83,7 +83,7 @@ export abstract class BaseCrudManager<K extends BaseCrudItem> {
 
             let {results, count} = await Q.props(promises);
 
-            return {results: results as DocType<K>[], count: count || (results as DocType<K>[]).length};
+            return {results: results as Doc<K>[], count: count || (results as Doc<K>[]).length};
         } catch (e) {
             this.logger.error(`failed to getAll ${this.constructor.name} ${JSON.stringify(options)}`, {e});
 
@@ -91,7 +91,7 @@ export abstract class BaseCrudManager<K extends BaseCrudItem> {
         }
     }
 
-    public async findAll(filter: string | CrudItemParams<K>, populate?: mongoose.ModelPopulateOptions | mongoose.ModelPopulateOptions[]): Promise<DocType<K>[]> {
+    public async findAll(filter: string | CrudItemParams<K>, populate?: mongoose.ModelPopulateOptions | mongoose.ModelPopulateOptions[]): Promise<Doc<K>[]> {
 
         try {
 
@@ -108,7 +108,7 @@ export abstract class BaseCrudManager<K extends BaseCrudItem> {
         }
     }
 
-    public async create(data: Partial<K>, ...args: any[]): Promise<DocType<K>> {
+    public async create(data: Partial<K>, ...args: any[]): Promise<Doc<K>> {
 
         try {
             data.created = Date.now();
@@ -129,7 +129,7 @@ export abstract class BaseCrudManager<K extends BaseCrudItem> {
 
     }
 
-    public async updateByModel(id: string, data: Partial<K>, ...args: any[]): Promise<DocType<K>> {
+    public async updateByModel(id: string, data: Partial<K>, ...args: any[]): Promise<Doc<K>> {
 
         try {
 
@@ -150,7 +150,7 @@ export abstract class BaseCrudManager<K extends BaseCrudItem> {
         }
     }
 
-    public async update(id: string, data: Partial<K>, ...args: any[]): Promise<DocType<K>> {
+    public async update(id: string, data: Partial<K>, ...args: any[]): Promise<Doc<K>> {
 
         try {
 
@@ -177,7 +177,7 @@ export abstract class BaseCrudManager<K extends BaseCrudItem> {
 
     }
 
-    public async delete(id: string, ...args: any[]): Promise<DocType<K>> {
+    public async delete(id: string, ...args: any[]): Promise<Doc<K>> {
 
         return this.update(id, {isDeleted: true, isActive: false} as K, args);
     }

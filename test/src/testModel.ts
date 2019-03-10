@@ -1,6 +1,6 @@
 import {TestNested} from "./testNested";
 import {TesRef} from "./tesRef";
-import {DocType, method, model, ModelType, pre, prop, Ref, schema, Schema, staticMethod, virtual} from "../../index";
+import {Doc, method, model, Model, pre, prop, Ref, schema, Schema, staticMethod, virtual} from "../../index";
 
 @model()
 @schema("Test", {strict: true})
@@ -27,12 +27,12 @@ export class Test extends Schema {
     }
 
     @method()
-    setName2(this: DocType<Test>, name) {
+    setName2(this: Doc<Test>, name) {
         this.save += name;
     }
 
     @staticMethod()
-    static setName3(this: ModelType<Test>, name) {
+    static setName3(this: Model<Test>, name) {
         return this.findById(name);
     }
 

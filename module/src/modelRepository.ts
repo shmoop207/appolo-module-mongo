@@ -1,19 +1,19 @@
 import mongoose = require('mongoose');
 import {define, inject, injectAlias, singleton} from 'appolo';
-import {ModelType, Schema} from "../..";
+import {Model, Schema} from "../..";
 
 @define()
 @singleton()
 export class ModelRepository {
     @inject() private client: mongoose.Connection;
-    @injectAlias("IModels", "modelName") private models: ModelType<any>[];
+    @injectAlias("IModels", "modelName") private models: Model<any>[];
 
 
     public get connection(): mongoose.Connection {
         return this.client;
     }
 
-    public getModel<T>(model: typeof Schema): ModelType<T> {
+    public getModel<T>(model: typeof Schema): Model<T> {
 
         let modelName = model.collectionName;
 
