@@ -52,7 +52,7 @@ export class Client implements IFactory<mongoose.Connection> {
 
             const connection = await mongoose.createConnection(connectionString, mongoOptions);
 
-            this.logger.info(`mongodb connection ${this.moduleOptions.id} open`);
+            this.logger.info(`mongodb connection open`);
 
             return connection
 

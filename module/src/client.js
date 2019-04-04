@@ -31,7 +31,7 @@ let Client = class Client {
                 this.logger.info('reconnected to mongodb', { url: connectionString });
             });
             const connection = await mongoose.createConnection(connectionString, mongoOptions);
-            this.logger.info(`mongodb connection ${this.moduleOptions.id} open`);
+            this.logger.info(`mongodb connection open`);
             return connection;
         }
         catch (e) {
