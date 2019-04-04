@@ -1,7 +1,7 @@
 "use strict";
 const logger_1 = require("@appolo/logger");
 module.exports = async function (app) {
-    if (!app.injector.getInstance("logger")) {
+    if (!app.injector.hasDefinition("logger")) {
         await app.module(logger_1.LoggerModule);
     }
 };

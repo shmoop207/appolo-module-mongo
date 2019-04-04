@@ -5,7 +5,7 @@ import {LoggerModule} from '@appolo/logger';
 
 export = async function (app: App) {
 
-    if(!app.injector.getInstance("logger")){
+    if(!app.injector.hasDefinition("logger")){
         await app.module(LoggerModule)
     }
 

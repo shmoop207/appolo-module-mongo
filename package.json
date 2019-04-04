@@ -1,6 +1,6 @@
 {
   "name": "@appolo/mongo",
-  "version": "0.0.2",
+  "version": "0.0.4",
   "description": "appolo mongo module",
   "publishConfig": {
     "access": "public"
@@ -8,8 +8,8 @@
   "keywords": [],
   "main": "index.js",
   "dependencies": {
-    "@appolo/logger": "^0.0.14",
-    "appolo": "^6.0.62",
+    "@appolo/logger": "^1.0.3",
+    "appolo": "^6.0.66",
     "appolo-mongo": "^0.0.2",
     "bluebird": "^3.5.3",
     "lodash": "^4.17.11",
