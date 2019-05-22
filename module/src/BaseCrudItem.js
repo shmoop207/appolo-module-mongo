@@ -1,0 +1,20 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const tslib_1 = require("tslib");
+const index_1 = require("../../index");
+class BaseCrudItem extends index_1.Schema {
+}
+tslib_1.__decorate([
+    index_1.prop({ type: Boolean, default: false })
+], BaseCrudItem.prototype, "isActive", void 0);
+tslib_1.__decorate([
+    index_1.prop({ type: Boolean, default: false })
+], BaseCrudItem.prototype, "isDeleted", void 0);
+tslib_1.__decorate([
+    index_1.prop({ type: Number })
+], BaseCrudItem.prototype, "created", void 0);
+tslib_1.__decorate([
+    index_1.prop({ type: Number })
+], BaseCrudItem.prototype, "updated", void 0);
+exports.BaseCrudItem = BaseCrudItem;
+//# sourceMappingURL=baseCrudItem.js.map
