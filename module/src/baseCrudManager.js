@@ -4,14 +4,16 @@ const tslib_1 = require("tslib");
 const Q = require("bluebird");
 const _ = require("lodash");
 const appolo_1 = require("appolo");
+const modelFactory_1 = require("./modelFactory");
 class BaseCrudManager {
     async getOne(id, fields, populate) {
         try {
-            let item = await this.model.findById(id)
-                .select(fields || {})
-                .where('isDeleted', false)
-                .populate(populate || [])
-                .exec();
+            let query = this.model.findById(id)
+                .select(fields || {});
+            if (this.model.schema.obj.isDeleted) {
+                query.where('isDeleted', false);
+            }
+            let item = await query.populate(populate || []).exec();
             return item;
         }
         catch (e) {
@@ -21,9 +23,12 @@ class BaseCrudManager {
     }
     async findOne(filter, fields, populate) {
         try {
-            let item = await this.model.findOne(filter)
-                .select(fields || {})
-                .where('isDeleted', false)
+            let query = this.model.findOne(filter)
+                .select(fields || {});
+            if (this.model.schema.obj.isDeleted) {
+                query.where('isDeleted', false);
+            }
+            let item = await query.where('isDeleted', false)
                 .populate(populate || [])
                 .exec();
             return item;
@@ -35,10 +40,12 @@ class BaseCrudManager {
     }
     async getAll(options = {}) {
         try {
-            let p1 = this.model.find({})
-                .select(options.fields || {})
-                .where('isDeleted', false)
-                .where(options.filter || {})
+            let query = this.model.find({})
+                .select(options.fields || {});
+            if (this.model.schema.obj.isDeleted) {
+                query.where('isDeleted', false);
+            }
+            let p1 = query.where(options.filter || {})
                 .sort(options.sort || {})
                 .populate(options.populate || [])
                 .limit(options.pageSize || 0)
@@ -77,12 +84,15 @@ class BaseCrudManager {
             throw e;
         }
     }
-    async create(data, ...args) {
+    async create(data) {
         try {
-            data.created = Date.now();
-            data.updated = Date.now();
-            data.isActive = _.isBoolean(data.isActive) ? data.isActive : true;
-            data.isDeleted = false;
+            if (Reflect.hasMetadata(modelFactory_1.BaseCrudSymbol, this.model)) {
+                let crud = data;
+                crud.created = Date.now();
+                crud.updated = Date.now();
+                crud.isActive = _.isBoolean(crud.isActive) ? crud.isActive : true;
+                crud.isDeleted = false;
+            }
             let model = new this.model(data);
             let doc = await model.save();
             return doc;
@@ -92,9 +102,11 @@ class BaseCrudManager {
             throw e;
         }
     }
-    async updateByModel(id, data, ...args) {
+    async updateByIdAndModel(id, data) {
         try {
-            data.updated = Date.now();
+            if (Reflect.hasMetadata(modelFactory_1.BaseCrudSymbol, this.model)) {
+                data.updated = Date.now();
+            }
             let updateData = _.has(data, '$set') ? data : { $set: data };
             let doc = await this.model.findByIdAndUpdate(id, updateData, { new: true })
                 .exec();
@@ -105,13 +117,15 @@ class BaseCrudManager {
             throw e;
         }
     }
-    async update(id, data, ...args) {
+    async updateById(id, data) {
         try {
             let item = await this.getOne(id);
             if (!item) {
                 throw new Error(`failed to find item for id ${id} ${this.constructor.name}`);
             }
-            item.updated = Date.now();
+            if (Reflect.hasMetadata(modelFactory_1.BaseCrudSymbol, this.model)) {
+                data.updated = Date.now();
+            }
             _.extend(item, data);
             await item.save();
             return item;
@@ -121,13 +135,24 @@ class BaseCrudManager {
             throw e;
         }
     }
-    async delete(id, ...args) {
-        return this.update(id, { isDeleted: true, isActive: false }, args);
+    async deleteById(id) {
+        if (Reflect.hasMetadata(modelFactory_1.BaseCrudSymbol, this.model)) {
+            return this.updateByIdAndModel(id, { isDeleted: true, isActive: false });
+        }
+        else {
+            return this.deleteHardById(id);
+        }
     }
-    async updateMulti(query, update, ...args) {
+    async deleteHardById(id) {
+        return this.model.findByIdAndDelete(id).exec();
+    }
+    async updateMany(query, update) {
         try {
-            const items = await this.findAll(query);
-            await Q.map(items, item => this.update(item._id, update, ...args), { concurrency: 20 });
+            if (Reflect.hasMetadata(modelFactory_1.BaseCrudSymbol, this.model)) {
+                update.updated = Date.now();
+            }
+            let updateData = _.has(update, '$set') ? update : { $set: update };
+            await this.model.updateMany(query, updateData).exec();
         }
         catch (e) {
             this.logger.error(`failed to updateMulti ${this.constructor.name}`, { e });

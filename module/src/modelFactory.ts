@@ -1,13 +1,24 @@
 import {IFactory} from 'appolo';
 import mongoose = require('mongoose');
-import {Schema} from "../..";
+import {BaseCrudItem, Schema} from "../..";
+
+export const BaseCrudSymbol = Symbol("baseCrudSymbol");
+
 
 export class ModelFactory implements IFactory<mongoose.Model<any>> {
 
     private schema: typeof Schema;
     private connection: mongoose.Connection;
 
+
     public get() {
-        return this.schema.getModel(this.connection);
+
+        let model = this.schema.getModel(this.connection);
+
+        if(BaseCrudItem.prototype.isPrototypeOf(this.schema.prototype)){
+            Reflect.defineMetadata(BaseCrudSymbol, model, model);
+        }
+
+        return model;
     }
 }

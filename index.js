@@ -19,5 +19,7 @@ const modelRepository_1 = require("./module/src/modelRepository");
 exports.ModelRepository = modelRepository_1.ModelRepository;
 const baseCrudManager_1 = require("./module/src/baseCrudManager");
 exports.BaseCrudManager = baseCrudManager_1.BaseCrudManager;
+const baseCrudItem_1 = require("./module/src/baseCrudItem");
+exports.BaseCrudItem = baseCrudItem_1.BaseCrudItem;
 exports.mongoose = require("mongoose");
 //# sourceMappingURL=index.js.map

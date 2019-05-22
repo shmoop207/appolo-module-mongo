@@ -2,19 +2,17 @@ import {createApp} from 'appolo'
 import {LoggerModule} from '@appolo/logger';
 import {MongoModule} from "../module/mongoModule";
 import {ModelRepository} from "../module//src/modelRepository";
-import {mongoose} from "../index";
 import {SomeManager} from "./src/someManager";
 import chai = require('chai');
 import sinonChai = require("sinon-chai");
 import {Test} from "./src/testModel";
-
 let should = require('chai').should();
 chai.use(sinonChai);
 
 describe("mongo module Spec", function () {
     it("should load mongo", async () => {
 
-        let app = createApp({root: __dirname, environment: "production", port: 8181});
+        let app = createApp({root: __dirname, environment: "production", port: 8184});
 
         await app.module(LoggerModule);
 
@@ -28,16 +26,21 @@ describe("mongo module Spec", function () {
 
         let manager = app.injector.get<SomeManager>(SomeManager);
 
-        manager.testModel.should.be.ok;
-        manager.testModel.modelName.should.be.eq("Test");
-        manager.testModel.setName3.should.be.ok;
+        manager.model.should.be.ok;
+        manager.model.modelName.should.be.eq("Test");
+        manager.model.setName3.should.be.ok;
 
-        let doc = new manager.testModel();
+        await manager.create({})
+
+
+        let doc = new manager.model();
         doc.setName2.should.be.ok;
         doc.name = "aa";
         doc.setName = "aa";
+        doc.nested = {deep: "ccccc"};
 
         doc.name.should.be.eq("aaaa");
+        doc.nested.deep.should.be.eq("ccccc");
 
         let model = modelRepository.getModel<Test>(Test);
 

@@ -1,10 +1,23 @@
 import {TestNested} from "./testNested";
 import {TesRef} from "./tesRef";
-import {Doc, method, model, Model, pre, prop, Ref, schema, Schema, staticMethod, virtual} from "../../index";
+import {
+    BaseCrudItem,
+    Doc,
+    method,
+    model,
+    Model,
+    pre,
+    prop,
+    Ref,
+    schema,
+    Schema,
+    staticMethod,
+    virtual
+} from "../../index";
 
 @model()
 @schema("Test", {strict: true})
-export class Test extends Schema {
+export class Test extends BaseCrudItem {
 
 
     _id: string;

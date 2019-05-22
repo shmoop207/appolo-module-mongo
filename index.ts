@@ -1,16 +1,17 @@
 import {ConnectionOptions} from "mongoose";
-import {Doc, Model, Schema, schema, prop,staticMethod,virtual,method,Ref,pre,post,index} from "appolo-mongo";
-import {model,injectModel} from "./module/src/decorator";
+import {Doc, Model, Schema, schema, prop, staticMethod, virtual, method, Ref, pre, post, index} from "appolo-mongo";
+import {model, injectModel} from "./module/src/decorator";
 import {MongoModule} from "./module/mongoModule";
 import {ModelRepository} from "./module/src/modelRepository";
 import {BaseCrudManager} from "./module/src/baseCrudManager";
-import {BaseCrudItem, CrudItemParams, GetAllParams} from "./module/src/interfaces";
-
+import {IBaseCrudItem, CrudItemParams, GetAllParams} from "./module/src/interfaces";
+import {BaseCrudItem} from "./module/src/baseCrudItem";
 
 
 export import mongoose = require('mongoose');
 
-export {ConnectionOptions,ModelRepository,
+export {
+    ConnectionOptions, ModelRepository,
     injectModel,
     Ref,
     staticMethod,
@@ -22,6 +23,7 @@ export {ConnectionOptions,ModelRepository,
     prop,
     Doc,
     Model,
+    IBaseCrudItem,
     BaseCrudItem,
     BaseCrudManager,
     CrudItemParams,

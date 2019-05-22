@@ -4,7 +4,7 @@ const tslib_1 = require("tslib");
 const testNested_1 = require("./testNested");
 const tesRef_1 = require("./tesRef");
 const index_1 = require("../../index");
-let Test = class Test extends index_1.Schema {
+let Test = class Test extends index_1.BaseCrudItem {
     set setName(name) {
         this.name += name;
     }

@@ -3,12 +3,12 @@ import {ConnectionOptions, Schema, SchemaOptions, SchemaTypeOpts} from "mongoose
 import {IModuleOptions} from "appolo";
 import {IndexOptions} from "mongodb";
 
-export interface BaseCrudItem {
-    _id: string,
-    isDeleted: boolean,
-    isActive: boolean,
-    updated: number,
-    created: number,
+export interface IBaseCrudItem {
+    _id?: string,
+    isDeleted?: boolean,
+    isActive?: boolean,
+    updated?: number,
+    created?: number
 }
 
 export type CrudItemParams<T> = { [J in keyof Partial<T>]: any };

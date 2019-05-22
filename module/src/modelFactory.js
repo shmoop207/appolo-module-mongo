@@ -1,8 +1,14 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const __1 = require("../..");
+exports.BaseCrudSymbol = Symbol("baseCrudSymbol");
 class ModelFactory {
     get() {
-        return this.schema.getModel(this.connection);
+        let model = this.schema.getModel(this.connection);
+        if (__1.BaseCrudItem.prototype.isPrototypeOf(this.schema.prototype)) {
+            Reflect.defineMetadata(exports.BaseCrudSymbol, model, model);
+        }
+        return model;
     }
 }
 exports.ModelFactory = ModelFactory;
