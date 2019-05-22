@@ -22,7 +22,7 @@ export abstract class BaseCrudManager<K extends Schema> {
             let query = this.model.findById(id)
                 .select(fields || {});
 
-            if (this.model.schema.obj.isDeleted) {
+            if (Reflect.hasMetadata(BaseCrudSymbol, this.model)) {
                 query.where('isDeleted', false)
             }
 
@@ -45,7 +45,7 @@ export abstract class BaseCrudManager<K extends Schema> {
             let query = this.model.findOne(filter)
                 .select(fields || {});
 
-            if (this.model.schema.obj.isDeleted) {
+            if (Reflect.hasMetadata(BaseCrudSymbol, this.model)) {
                 query.where('isDeleted', false)
             }
 
@@ -68,7 +68,7 @@ export abstract class BaseCrudManager<K extends Schema> {
             let query = this.model.find({})
                 .select(options.fields || {});
 
-            if (this.model.schema.obj.isDeleted) {
+            if (Reflect.hasMetadata(BaseCrudSymbol, this.model)) {
                 query.where('isDeleted', false)
             }
 
@@ -107,10 +107,17 @@ export abstract class BaseCrudManager<K extends Schema> {
 
         try {
 
-            let items = await this.model
-                .find(filter)
-                .where('isDeleted', false)
-                .populate(populate || []).exec();
+            let query = this.model
+                .find(filter);
+
+            if (Reflect.hasMetadata(BaseCrudSymbol, this.model)) {
+                query.where('isDeleted', false)
+            }
+
+            let items = await query.where('isDeleted', false)
+                .populate(populate || [])
+                .exec();
+
             return items;
 
         } catch (e) {

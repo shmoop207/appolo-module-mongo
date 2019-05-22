@@ -1,6 +1,6 @@
 {
   "name": "@appolo/mongo",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "appolo mongo module",
   "publishConfig": {
     "access": "public"
@@ -9,7 +9,7 @@
   "main": "index.js",
   "dependencies": {
     "@appolo/logger": "^1.0.3",
-    "appolo": "^6.0.66",
+    "appolo": "^6.0.68",
     "appolo-mongo": "^0.0.2",
     "bluebird": "^3.5.3",
     "lodash": "^4.17.11",
@@ -26,7 +26,7 @@
     "@types/sinon-chai": "^3.2.2",
     "typescript": "^3.3.3333",
     "chai": "^4.2.0",
-    "mocha": "^6.0.2",
+    "mocha": "^6.1.4",
     "sinon": "^7.2.7",
     "sinon-chai": "^3.3.0"
   },

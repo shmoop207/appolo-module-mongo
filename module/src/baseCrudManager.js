@@ -10,7 +10,7 @@ class BaseCrudManager {
         try {
             let query = this.model.findById(id)
                 .select(fields || {});
-            if (this.model.schema.obj.isDeleted) {
+            if (Reflect.hasMetadata(modelFactory_1.BaseCrudSymbol, this.model)) {
                 query.where('isDeleted', false);
             }
             let item = await query.populate(populate || []).exec();
@@ -25,7 +25,7 @@ class BaseCrudManager {
         try {
             let query = this.model.findOne(filter)
                 .select(fields || {});
-            if (this.model.schema.obj.isDeleted) {
+            if (Reflect.hasMetadata(modelFactory_1.BaseCrudSymbol, this.model)) {
                 query.where('isDeleted', false);
             }
             let item = await query.where('isDeleted', false)
@@ -42,7 +42,7 @@ class BaseCrudManager {
         try {
             let query = this.model.find({})
                 .select(options.fields || {});
-            if (this.model.schema.obj.isDeleted) {
+            if (Reflect.hasMetadata(modelFactory_1.BaseCrudSymbol, this.model)) {
                 query.where('isDeleted', false);
             }
             let p1 = query.where(options.filter || {})
@@ -73,10 +73,14 @@ class BaseCrudManager {
     }
     async findAll(filter, populate) {
         try {
-            let items = await this.model
-                .find(filter)
-                .where('isDeleted', false)
-                .populate(populate || []).exec();
+            let query = this.model
+                .find(filter);
+            if (Reflect.hasMetadata(modelFactory_1.BaseCrudSymbol, this.model)) {
+                query.where('isDeleted', false);
+            }
+            let items = await query.where('isDeleted', false)
+                .populate(populate || [])
+                .exec();
             return items;
         }
         catch (e) {
