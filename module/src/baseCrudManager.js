@@ -106,13 +106,12 @@ class BaseCrudManager {
             throw e;
         }
     }
-    async updateByIdAndModel(id, data) {
+    async updateById(id, data, options) {
         try {
             if (Reflect.hasMetadata(modelFactory_1.BaseCrudSymbol, this.model)) {
                 data.updated = Date.now();
             }
-            let updateData = _.has(data, '$set') ? data : { $set: data };
-            let doc = await this.model.findByIdAndUpdate(id, updateData, { new: true })
+            let doc = await this.model.findByIdAndUpdate(id, data, { new: true })
                 .exec();
             return doc;
         }
@@ -121,45 +120,31 @@ class BaseCrudManager {
             throw e;
         }
     }
-    async updateById(id, data) {
-        try {
-            let item = await this.getOne(id);
-            if (!item) {
-                throw new Error(`failed to find item for id ${id} ${this.constructor.name}`);
-            }
-            if (Reflect.hasMetadata(modelFactory_1.BaseCrudSymbol, this.model)) {
-                data.updated = Date.now();
-            }
-            _.extend(item, data);
-            await item.save();
-            return item;
-        }
-        catch (e) {
-            this.logger.error(`failed to update ${this.constructor.name} ${JSON.stringify(data)}`, { e });
-            throw e;
-        }
-    }
-    async deleteById(id) {
-        if (Reflect.hasMetadata(modelFactory_1.BaseCrudSymbol, this.model)) {
-            return this.updateByIdAndModel(id, { isDeleted: true, isActive: false });
-        }
-        else {
-            return this.deleteHardById(id);
-        }
-    }
-    async deleteHardById(id) {
-        return this.model.findByIdAndDelete(id).exec();
-    }
-    async updateMany(query, update) {
+    async update(query, update) {
         try {
             if (Reflect.hasMetadata(modelFactory_1.BaseCrudSymbol, this.model)) {
                 update.updated = Date.now();
             }
-            let updateData = _.has(update, '$set') ? update : { $set: update };
-            await this.model.updateMany(query, updateData).exec();
+            await this.model.updateMany(query, update).exec();
         }
         catch (e) {
             this.logger.error(`failed to updateMulti ${this.constructor.name}`, { e });
+        }
+    }
+    async deleteById(id, hard) {
+        if (Reflect.hasMetadata(modelFactory_1.BaseCrudSymbol, this.model) && !hard) {
+            return this.updateById(id, { isDeleted: true, isActive: false });
+        }
+        else {
+            return this.model.findByIdAndDelete(id).exec();
+        }
+    }
+    async delete(query, hard) {
+        if (Reflect.hasMetadata(modelFactory_1.BaseCrudSymbol, this.model) && !hard) {
+            await this.update(query, { isDeleted: true, isActive: false });
+        }
+        else {
+            await this.model.deleteMany(query).exec();
         }
     }
 }

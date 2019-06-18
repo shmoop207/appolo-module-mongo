@@ -1,6 +1,6 @@
 {
   "name": "@appolo/mongo",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "description": "appolo mongo module",
   "publishConfig": {
     "access": "public"
@@ -9,25 +9,25 @@
   "main": "index.js",
   "dependencies": {
     "@appolo/logger": "^1.0.3",
-    "appolo": "^6.0.68",
+    "appolo": "^6.0.71",
     "appolo-mongo": "^0.0.2",
-    "bluebird": "^3.5.3",
+    "bluebird": "^3.5.5",
     "lodash": "^4.17.11",
-    "mongoose": "5.4.17"
+    "mongoose": "5.6.0"
   },
   "devDependencies": {
-    "@types/bluebird": "^3.5.26",
-    "@types/lodash": "^4.14.122",
-    "@types/mongoose": "^5.3.20",
-    "@types/node": "^11.10.4",
-    "@types/mocha": "^5.2.6",
+    "@types/bluebird": "^3.5.27",
+    "@types/lodash": "^4.14.134",
+    "@types/mongoose": "^5.5.6",
+    "@types/node": "^12.0.8",
+    "@types/mocha": "^5.2.7",
     "@types/chai": "^4.1.7",
-    "@types/sinon": "^7.0.8",
+    "@types/sinon": "^7.0.13",
     "@types/sinon-chai": "^3.2.2",
-    "typescript": "^3.3.3333",
+    "typescript": "^3.5.2",
     "chai": "^4.2.0",
     "mocha": "^6.1.4",
-    "sinon": "^7.2.7",
+    "sinon": "^7.3.2",
     "sinon-chai": "^3.3.0"
   },
   "repository": {

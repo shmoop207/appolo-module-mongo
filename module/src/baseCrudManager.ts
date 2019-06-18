@@ -7,6 +7,7 @@ import {inject} from "appolo";
 import {ILogger} from "@appolo/logger";
 import {IBaseCrudItem, CrudItemParams, GetAllParams} from "./interfaces";
 import {BaseCrudSymbol} from "./modelFactory";
+import {QueryFindOneAndUpdateOptions} from "mongoose";
 
 
 export abstract class BaseCrudManager<K extends Schema> {
@@ -152,7 +153,7 @@ export abstract class BaseCrudManager<K extends Schema> {
 
     }
 
-    public async updateByIdAndModel(id: string, data: Partial<K>): Promise<Doc<K>> {
+    public async updateById(id: string, data: Partial<K>, options?: QueryFindOneAndUpdateOptions): Promise<Doc<K>> {
 
         try {
 
@@ -160,9 +161,7 @@ export abstract class BaseCrudManager<K extends Schema> {
                 (data as K & BaseCrudItem).updated = Date.now();
             }
 
-            let updateData = _.has(data, '$set') ? data : {$set: data};
-
-            let doc = await this.model.findByIdAndUpdate(id, updateData, {new: true})
+            let doc = await this.model.findByIdAndUpdate(id, data, {new: true})
                 .exec();
 
             return doc;
@@ -175,59 +174,36 @@ export abstract class BaseCrudManager<K extends Schema> {
         }
     }
 
-    public async updateById(id: string, data: Partial<K>): Promise<Doc<K>> {
-
-        try {
-
-            let item = await this.getOne(id);
-
-            if (!item) {
-                throw new Error(`failed to find item for id ${id} ${this.constructor.name}`);
-            }
-
-            if (Reflect.hasMetadata(BaseCrudSymbol, this.model)) {
-                (data as K & BaseCrudItem).updated = Date.now();
-            }
-
-            _.extend(item, data);
-
-            await item.save();
-
-            return item;
-
-        } catch (e) {
-
-            this.logger.error(`failed to update ${this.constructor.name} ${JSON.stringify(data)}`, {e});
-
-            throw e;
-        }
-    }
-
-    public async deleteById(id: string): Promise<Doc<K>> {
-        if (Reflect.hasMetadata(BaseCrudSymbol, this.model)) {
-            return this.updateByIdAndModel(id, {isDeleted: true, isActive: false} as K & BaseCrudItem);
-        } else {
-            return this.deleteHardById(id)
-        }
-    }
-
-    public async deleteHardById(id: string): Promise<Doc<K>> {
-        return this.model.findByIdAndDelete(id).exec()
-    }
-
-    public async updateMany(query: string | CrudItemParams<K>, update: Partial<K>): Promise<void> {
+    public async update(query: string | CrudItemParams<K>, update: Partial<K>): Promise<void> {
         try {
 
             if (Reflect.hasMetadata(BaseCrudSymbol, this.model)) {
                 (update as K & BaseCrudItem).updated = Date.now();
             }
-            let updateData = _.has(update, '$set') ? update : {$set: update};
 
-            await this.model.updateMany(query, updateData).exec();
+            await this.model.updateMany(query, update).exec();
 
         } catch (e) {
             this.logger.error(`failed to updateMulti ${this.constructor.name}`, {e});
 
         }
     }
+    
+    public async deleteById(id: string, hard?: boolean): Promise<Doc<K>> {
+        if (Reflect.hasMetadata(BaseCrudSymbol, this.model) && !hard) {
+            return this.updateById(id, {isDeleted: true, isActive: false} as K & BaseCrudItem);
+        } else {
+            return this.model.findByIdAndDelete(id).exec()
+        }
+    }
+
+    public async delete(query: string | CrudItemParams<K>, hard?: boolean): Promise<void> {
+        if (Reflect.hasMetadata(BaseCrudSymbol, this.model) && !hard) {
+            await this.update(query, {isDeleted: true, isActive: false} as K & BaseCrudItem);
+        } else {
+            await this.model.deleteMany(query).exec()
+        }
+    }
+
+
 }

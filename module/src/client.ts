@@ -25,6 +25,7 @@ export class Client implements IFactory<mongoose.Connection> {
 
             let mongoOptions: mongoose.ConnectionOptions = {
                 keepAlive: true,
+                useFindAndModify:false,
                 useNewUrlParser: true,
                 useCreateIndex: true,
                 autoReconnect: true,

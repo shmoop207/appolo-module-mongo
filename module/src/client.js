@@ -12,6 +12,7 @@ let Client = class Client {
             let connectionString = this.moduleOptions.connection;
             let mongoOptions = {
                 keepAlive: true,
+                useFindAndModify: false,
                 useNewUrlParser: true,
                 useCreateIndex: true,
                 autoReconnect: true,
