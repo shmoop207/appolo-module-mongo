@@ -174,7 +174,7 @@ export abstract class BaseCrudManager<K extends Schema> {
         }
     }
 
-    public async update(query: string | CrudItemParams<K>, update: Partial<K>): Promise<void> {
+    public async update(query: CrudItemParams<K>, update: Partial<K>): Promise<void> {
         try {
 
             if (Reflect.hasMetadata(BaseCrudSymbol, this.model)) {
@@ -188,7 +188,7 @@ export abstract class BaseCrudManager<K extends Schema> {
 
         }
     }
-    
+
     public async deleteById(id: string, hard?: boolean): Promise<Doc<K>> {
         if (Reflect.hasMetadata(BaseCrudSymbol, this.model) && !hard) {
             return this.updateById(id, {isDeleted: true, isActive: false} as K & BaseCrudItem);
@@ -197,7 +197,7 @@ export abstract class BaseCrudManager<K extends Schema> {
         }
     }
 
-    public async delete(query: string | CrudItemParams<K>, hard?: boolean): Promise<void> {
+    public async delete(query: CrudItemParams<K>, hard?: boolean): Promise<void> {
         if (Reflect.hasMetadata(BaseCrudSymbol, this.model) && !hard) {
             await this.update(query, {isDeleted: true, isActive: false} as K & BaseCrudItem);
         } else {
