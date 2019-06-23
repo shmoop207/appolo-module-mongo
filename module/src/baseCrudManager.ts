@@ -16,7 +16,7 @@ export abstract class BaseCrudManager<K extends Schema> {
 
     protected abstract get model(): Model<K>
 
-    public getOne(id: string, params: Pick<GetAllParams<K>, "fields" | "populate" | "lean"> = {}): Promise<Doc<K>> {
+    public getById(id: string, params: Pick<GetAllParams<K>, "fields" | "populate" | "lean"> = {}): Promise<Doc<K>> {
 
         return this.findOne({...params, filter: {_id: id} as any});
     }
