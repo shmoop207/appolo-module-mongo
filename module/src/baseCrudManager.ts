@@ -7,7 +7,7 @@ import {inject} from "appolo";
 import {ILogger} from "@appolo/logger";
 import {IBaseCrudItem, CrudItemParams, GetAllParams} from "./interfaces";
 import {BaseCrudSymbol} from "./modelFactory";
-import {QueryFindOneAndUpdateOptions} from "mongoose";
+import {ModelUpdateOptions, QueryFindOneAndUpdateOptions} from "mongoose";
 
 
 export abstract class BaseCrudManager<K extends Schema> {
@@ -16,69 +16,62 @@ export abstract class BaseCrudManager<K extends Schema> {
 
     protected abstract get model(): Model<K>
 
+    public getOne(id: string, params: Pick<GetAllParams<K>, "fields" | "populate" | "lean"> = {}): Promise<Doc<K>> {
 
-    public async getOne(id: string, fields?: string | CrudItemParams<K>, populate?: mongoose.ModelPopulateOptions | mongoose.ModelPopulateOptions[]): Promise<Doc<K>> {
+        return this.findOne({...params, filter: {_id: id} as any});
+    }
+
+    public async findOne(params: Pick<GetAllParams<K>, "filter" | "fields" | "populate" | "lean"> = {}): Promise<Doc<K>> {
+
         try {
 
-            let query = this.model.findById(id)
-                .select(fields || {});
+            let query = this.model
+                .findOne(params.filter || {});
 
-            if (Reflect.hasMetadata(BaseCrudSymbol, this.model)) {
+            if (params.fields) {
+                query.select(params.fields);
+            }
+
+            if (params.lean) {
+                query.lean(params.lean);
+            }
+
+            if (this.model[BaseCrudSymbol]) {
                 query.where('isDeleted', false)
             }
 
-            let item = await query.populate(populate || []).exec();
+            if (params.populate) {
+                query.populate(params.populate)
+            }
+
+            let item = await query.exec();
 
             return item;
 
-        } catch (e) {
-
-            this.logger.error(`failed to get ${this.constructor.name} ${id}`, {e});
+        } catch
+            (e) {
+            this.logger.error(`failed to findOne ${this.constructor.name}`, {e, params});
 
             throw e;
         }
     }
 
-    public async findOne(filter: string | Object, fields?: string | CrudItemParams<K>, populate?: mongoose.ModelPopulateOptions | mongoose.ModelPopulateOptions[]): Promise<Doc<K>> {
-
-        try {
-
-            let query = this.model.findOne(filter)
-                .select(fields || {});
-
-            if (Reflect.hasMetadata(BaseCrudSymbol, this.model)) {
-                query.where('isDeleted', false)
-            }
-
-            let item = await query.where('isDeleted', false)
-                .populate(populate || [])
-                .exec();
-
-            return item;
-
-        } catch (e) {
-            this.logger.error(`failed to findOne ${filter} ${this.constructor.name}`, {e});
-
-            throw e;
-        }
-    }
-
-    public async getAll(options: GetAllParams<Partial<K>> = {}): Promise<{ results: Doc<K>[], count: number }> {
+    public async getAll(params: GetAllParams<Partial<K>> = {}): Promise<{ results: Doc<K> [], count: number }> {
 
         try {
             let query = this.model.find({})
-                .select(options.fields || {});
+                .select(params.fields || {});
 
-            if (Reflect.hasMetadata(BaseCrudSymbol, this.model)) {
+            if (this.model[BaseCrudSymbol]) {
                 query.where('isDeleted', false)
             }
 
-            let p1 = query.where(options.filter || {})
-                .sort(options.sort || {})
-                .populate(options.populate || [])
-                .limit(options.pageSize || 0)
-                .lean(options.lean)
-                .skip((options.pageSize || 0) * ((options.page || 0) - 1))
+            let p1 = query.where(params.filter || {})
+                .sort(params.sort || {})
+                .populate(params.populate || [])
+                .limit(params.pageSize || 0)
+                .lean(params.lean)
+                .skip((params.pageSize || 0) * ((params.page || 0) - 1))
                 .exec();
 
             let promises = {
@@ -86,10 +79,14 @@ export abstract class BaseCrudManager<K extends Schema> {
                 count: Promise.resolve(0)
             };
 
-            if (options.pageSize > 0 && options.page > 0) {
-                promises.count = this.model
-                    .where('isDeleted', false)
-                    .where(options.filter || {})
+            if (params.pageSize > 0 && params.page > 0) {
+                let query2 = this.model.find({});
+
+                if (this.model[BaseCrudSymbol]) {
+                    query2.where('isDeleted', false)
+                }
+
+                promises.count = query2.where(params.filter || {})
                     .countDocuments()
                     .exec();
             }
@@ -97,31 +94,37 @@ export abstract class BaseCrudManager<K extends Schema> {
             let {results, count} = await Q.props(promises);
 
             return {results: results as Doc<K>[], count: count || (results as Doc<K>[]).length};
-        } catch (e) {
-            this.logger.error(`failed to getAll ${this.constructor.name} ${JSON.stringify(options)}`, {e});
+        } catch
+            (e) {
+            this.logger.error(`${this.constructor.name} failed to getAll`, {e, params});
 
             throw e;
         }
     }
 
-    public async findAll(filter: string | CrudItemParams<K>, populate?: mongoose.ModelPopulateOptions | mongoose.ModelPopulateOptions[]): Promise<Doc<K>[]> {
+    public async findAll(options: Omit<GetAllParams<Partial<K>>, "page" | "pageSize"> = {}): Promise<Doc<K> []> {
 
         try {
 
             let query = this.model
-                .find(filter);
+                .find(options.filter || {})
+                .sort(options.sort || {})
+                .lean(options.lean);
 
-            if (Reflect.hasMetadata(BaseCrudSymbol, this.model)) {
+            if (this.model[BaseCrudSymbol]) {
                 query.where('isDeleted', false)
             }
 
-            let items = await query.where('isDeleted', false)
-                .populate(populate || [])
-                .exec();
+            if (options.populate) {
+                query.populate(options.populate)
+            }
+
+            let items = await query.exec();
 
             return items;
 
-        } catch (e) {
+        } catch
+            (e) {
             this.logger.error(`failed to findAll ${this.constructor.name}`, {e});
 
             throw e;
@@ -132,12 +135,17 @@ export abstract class BaseCrudManager<K extends Schema> {
 
         try {
 
-            if (Reflect.hasMetadata(BaseCrudSymbol, this.model)) {
-                let crud = data as K & BaseCrudItem;
-                crud.created = Date.now();
-                crud.updated = Date.now();
-                crud.isActive = _.isBoolean(crud.isActive) ? crud.isActive : true;
-                crud.isDeleted = false;
+            if (this.model[BaseCrudSymbol]) {
+
+                let isActive = (data as K & BaseCrudItem).isActive;
+
+                data = {
+                    ...data,
+                    created: Date.now(),
+                    updated: Date.now(),
+                    isActive: _.isBoolean(isActive) ? isActive : true,
+                    isDeleted: false
+                } as K & BaseCrudItem;
             }
 
             let model = new this.model(data);
@@ -145,64 +153,89 @@ export abstract class BaseCrudManager<K extends Schema> {
             let doc = await model.save();
 
             return doc;
-        } catch (e) {
-            this.logger.error(`failed to create ${this.constructor.name} ${JSON.stringify(data)}`, {e});
+        } catch
+            (e) {
+            this.logger.error(`${this.constructor.name} failed to create`, {e, data});
 
             throw e;
         }
 
     }
 
-    public async updateById(id: string, data: Partial<K>, options?: QueryFindOneAndUpdateOptions): Promise<Doc<K>> {
+    public async updateById(id: string, data: Partial<K>, options: QueryFindOneAndUpdateOptions = {}): Promise<Doc<K>> {
 
         try {
 
-            if (Reflect.hasMetadata(BaseCrudSymbol, this.model)) {
-                (data as K & BaseCrudItem).updated = Date.now();
+            if (this.model[BaseCrudSymbol]) {
+                data = {updated: Date.now(), ...options} as K & BaseCrudItem;
             }
 
-            let doc = await this.model.findByIdAndUpdate(id, data, {new: true})
+            options = {new: true, ...options};
+
+            let doc = await this.model.findByIdAndUpdate(id, data, options)
                 .exec();
 
             return doc;
 
-        } catch (e) {
+        } catch
+            (e) {
 
-            this.logger.error(`failed to update ${this.constructor.name} ${JSON.stringify(data)}`, {e});
+            this.logger.error(`${this.constructor.name} failed to update`, {e, data});
 
             throw e;
         }
     }
 
-    public async update(query: CrudItemParams<K>, update: Partial<K>): Promise<void> {
+    public async update(query: CrudItemParams<K>, update: Partial<K>, options ?: ModelUpdateOptions): Promise<void> {
         try {
 
-            if (Reflect.hasMetadata(BaseCrudSymbol, this.model)) {
-                (update as K & BaseCrudItem).updated = Date.now();
+            if (this.model[BaseCrudSymbol]) {
+                update = {updated: Date.now(), ...options} as K & BaseCrudItem;
             }
 
-            await this.model.updateMany(query, update).exec();
+            await this.model.updateMany(query, update, options).exec();
 
-        } catch (e) {
-            this.logger.error(`failed to updateMulti ${this.constructor.name}`, {e});
+        } catch
+            (e) {
+            this.logger.error(`${this.constructor.name} failed to updateMulti`, {e, query});
+            throw e
 
         }
     }
 
-    public async deleteById(id: string, hard?: boolean): Promise<Doc<K>> {
-        if (Reflect.hasMetadata(BaseCrudSymbol, this.model) && !hard) {
-            return this.updateById(id, {isDeleted: true, isActive: false} as K & BaseCrudItem);
-        } else {
-            return this.model.findByIdAndDelete(id).exec()
+    public async deleteById(id: string, hard ?: boolean): Promise<void> {
+        try {
+
+            if (this.model[BaseCrudSymbol] && !hard) {
+
+                await this.updateById(id, {isDeleted: true, isActive: false} as K & BaseCrudItem);
+
+            } else {
+
+                await this.model.findByIdAndDelete(id).exec()
+            }
+        } catch
+            (e) {
+            this.logger.error(`${this.constructor.name} failed to deleteById`, {e, id});
+            throw e
+
         }
     }
 
-    public async delete(query: CrudItemParams<K>, hard?: boolean): Promise<void> {
-        if (Reflect.hasMetadata(BaseCrudSymbol, this.model) && !hard) {
-            await this.update(query, {isDeleted: true, isActive: false} as K & BaseCrudItem);
-        } else {
-            await this.model.deleteMany(query).exec()
+    public async delete(query: CrudItemParams<K>, hard ?: boolean): Promise<void> {
+        try {
+            if (this.model[BaseCrudSymbol] && !hard) {
+                await this.update(query, {isDeleted: true, isActive: false} as K & BaseCrudItem);
+            } else {
+                await this.model.deleteMany(query).exec()
+            }
+        } catch
+            (e) {
+            this.logger.error(`${this.constructor.name} failed to delete`, {e, query});
+            throw e
+
         }
+
     }
 
 

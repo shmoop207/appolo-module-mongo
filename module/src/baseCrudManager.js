@@ -6,60 +6,57 @@ const _ = require("lodash");
 const appolo_1 = require("appolo");
 const modelFactory_1 = require("./modelFactory");
 class BaseCrudManager {
-    async getOne(id, fields, populate) {
+    getOne(id, params = {}) {
+        return this.findOne(Object.assign({}, params, { filter: { _id: id } }));
+    }
+    async findOne(params = {}) {
         try {
-            let query = this.model.findById(id)
-                .select(fields || {});
-            if (Reflect.hasMetadata(modelFactory_1.BaseCrudSymbol, this.model)) {
+            let query = this.model
+                .findOne(params.filter || {});
+            if (params.fields) {
+                query.select(params.fields);
+            }
+            if (params.lean) {
+                query.lean(params.lean);
+            }
+            if (this.model[modelFactory_1.BaseCrudSymbol]) {
                 query.where('isDeleted', false);
             }
-            let item = await query.populate(populate || []).exec();
+            if (params.populate) {
+                query.populate(params.populate);
+            }
+            let item = await query.exec();
             return item;
         }
         catch (e) {
-            this.logger.error(`failed to get ${this.constructor.name} ${id}`, { e });
+            this.logger.error(`failed to findOne ${this.constructor.name}`, { e, params });
             throw e;
         }
     }
-    async findOne(filter, fields, populate) {
-        try {
-            let query = this.model.findOne(filter)
-                .select(fields || {});
-            if (Reflect.hasMetadata(modelFactory_1.BaseCrudSymbol, this.model)) {
-                query.where('isDeleted', false);
-            }
-            let item = await query.where('isDeleted', false)
-                .populate(populate || [])
-                .exec();
-            return item;
-        }
-        catch (e) {
-            this.logger.error(`failed to findOne ${filter} ${this.constructor.name}`, { e });
-            throw e;
-        }
-    }
-    async getAll(options = {}) {
+    async getAll(params = {}) {
         try {
             let query = this.model.find({})
-                .select(options.fields || {});
-            if (Reflect.hasMetadata(modelFactory_1.BaseCrudSymbol, this.model)) {
+                .select(params.fields || {});
+            if (this.model[modelFactory_1.BaseCrudSymbol]) {
                 query.where('isDeleted', false);
             }
-            let p1 = query.where(options.filter || {})
-                .sort(options.sort || {})
-                .populate(options.populate || [])
-                .limit(options.pageSize || 0)
-                .lean(options.lean)
-                .skip((options.pageSize || 0) * ((options.page || 0) - 1))
+            let p1 = query.where(params.filter || {})
+                .sort(params.sort || {})
+                .populate(params.populate || [])
+                .limit(params.pageSize || 0)
+                .lean(params.lean)
+                .skip((params.pageSize || 0) * ((params.page || 0) - 1))
                 .exec();
             let promises = {
                 results: p1,
                 count: Promise.resolve(0)
             };
-            if (options.pageSize > 0 && options.page > 0) {
-                promises.count = this.model
-                    .where('isDeleted', false)
-                    .where(options.filter || {})
+            if (params.pageSize > 0 && params.page > 0) {
+                let query2 = this.model.find({});
+                if (this.model[modelFactory_1.BaseCrudSymbol]) {
+                    query2.where('isDeleted', false);
+                }
+                promises.count = query2.where(params.filter || {})
                     .countDocuments()
                     .exec();
             }
@@ -67,20 +64,23 @@ class BaseCrudManager {
             return { results: results, count: count || results.length };
         }
         catch (e) {
-            this.logger.error(`failed to getAll ${this.constructor.name} ${JSON.stringify(options)}`, { e });
+            this.logger.error(`${this.constructor.name} failed to getAll`, { e, params });
             throw e;
         }
     }
-    async findAll(filter, populate) {
+    async findAll(options = {}) {
         try {
             let query = this.model
-                .find(filter);
-            if (Reflect.hasMetadata(modelFactory_1.BaseCrudSymbol, this.model)) {
+                .find(options.filter || {})
+                .sort(options.sort || {})
+                .lean(options.lean);
+            if (this.model[modelFactory_1.BaseCrudSymbol]) {
                 query.where('isDeleted', false);
             }
-            let items = await query.where('isDeleted', false)
-                .populate(populate || [])
-                .exec();
+            if (options.populate) {
+                query.populate(options.populate);
+            }
+            let items = await query.exec();
             return items;
         }
         catch (e) {
@@ -90,61 +90,72 @@ class BaseCrudManager {
     }
     async create(data) {
         try {
-            if (Reflect.hasMetadata(modelFactory_1.BaseCrudSymbol, this.model)) {
-                let crud = data;
-                crud.created = Date.now();
-                crud.updated = Date.now();
-                crud.isActive = _.isBoolean(crud.isActive) ? crud.isActive : true;
-                crud.isDeleted = false;
+            if (this.model[modelFactory_1.BaseCrudSymbol]) {
+                let isActive = data.isActive;
+                data = Object.assign({}, data, { created: Date.now(), updated: Date.now(), isActive: _.isBoolean(isActive) ? isActive : true, isDeleted: false });
             }
             let model = new this.model(data);
             let doc = await model.save();
             return doc;
         }
         catch (e) {
-            this.logger.error(`failed to create ${this.constructor.name} ${JSON.stringify(data)}`, { e });
+            this.logger.error(`${this.constructor.name} failed to create`, { e, data });
             throw e;
         }
     }
-    async updateById(id, data, options) {
+    async updateById(id, data, options = {}) {
         try {
-            if (Reflect.hasMetadata(modelFactory_1.BaseCrudSymbol, this.model)) {
-                data.updated = Date.now();
+            if (this.model[modelFactory_1.BaseCrudSymbol]) {
+                data = Object.assign({ updated: Date.now() }, options);
             }
-            let doc = await this.model.findByIdAndUpdate(id, data, { new: true })
+            options = Object.assign({ new: true }, options);
+            let doc = await this.model.findByIdAndUpdate(id, data, options)
                 .exec();
             return doc;
         }
         catch (e) {
-            this.logger.error(`failed to update ${this.constructor.name} ${JSON.stringify(data)}`, { e });
+            this.logger.error(`${this.constructor.name} failed to update`, { e, data });
             throw e;
         }
     }
-    async update(query, update) {
+    async update(query, update, options) {
         try {
-            if (Reflect.hasMetadata(modelFactory_1.BaseCrudSymbol, this.model)) {
-                update.updated = Date.now();
+            if (this.model[modelFactory_1.BaseCrudSymbol]) {
+                update = Object.assign({ updated: Date.now() }, options);
             }
-            await this.model.updateMany(query, update).exec();
+            await this.model.updateMany(query, update, options).exec();
         }
         catch (e) {
-            this.logger.error(`failed to updateMulti ${this.constructor.name}`, { e });
+            this.logger.error(`${this.constructor.name} failed to updateMulti`, { e, query });
+            throw e;
         }
     }
     async deleteById(id, hard) {
-        if (Reflect.hasMetadata(modelFactory_1.BaseCrudSymbol, this.model) && !hard) {
-            return this.updateById(id, { isDeleted: true, isActive: false });
+        try {
+            if (this.model[modelFactory_1.BaseCrudSymbol] && !hard) {
+                await this.updateById(id, { isDeleted: true, isActive: false });
+            }
+            else {
+                await this.model.findByIdAndDelete(id).exec();
+            }
         }
-        else {
-            return this.model.findByIdAndDelete(id).exec();
+        catch (e) {
+            this.logger.error(`${this.constructor.name} failed to deleteById`, { e, id });
+            throw e;
         }
     }
     async delete(query, hard) {
-        if (Reflect.hasMetadata(modelFactory_1.BaseCrudSymbol, this.model) && !hard) {
-            await this.update(query, { isDeleted: true, isActive: false });
+        try {
+            if (this.model[modelFactory_1.BaseCrudSymbol] && !hard) {
+                await this.update(query, { isDeleted: true, isActive: false });
+            }
+            else {
+                await this.model.deleteMany(query).exec();
+            }
         }
-        else {
-            await this.model.deleteMany(query).exec();
+        catch (e) {
+            this.logger.error(`${this.constructor.name} failed to delete`, { e, query });
+            throw e;
         }
     }
 }

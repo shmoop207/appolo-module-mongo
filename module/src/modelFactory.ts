@@ -15,8 +15,9 @@ export class ModelFactory implements IFactory<mongoose.Model<any>> {
 
         let model = this.schema.getModel(this.connection);
 
-        if(BaseCrudItem.prototype.isPrototypeOf(this.schema.prototype)){
+        if (BaseCrudItem.prototype.isPrototypeOf(this.schema.prototype)) {
             Reflect.defineMetadata(BaseCrudSymbol, model, model);
+            model[BaseCrudSymbol] = true;
         }
 
         return model;
