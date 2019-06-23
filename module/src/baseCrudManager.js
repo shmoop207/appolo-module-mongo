@@ -120,6 +120,9 @@ class BaseCrudManager {
     }
     async update(query, update, options) {
         try {
+            if (!_.isPlainObject(query)) {
+                return this.updateById(query, update, options);
+            }
             if (this.model[modelFactory_1.BaseCrudSymbol]) {
                 update = Object.assign({ updated: Date.now() }, options);
             }
@@ -146,6 +149,9 @@ class BaseCrudManager {
     }
     async delete(query, hard) {
         try {
+            if (!_.isPlainObject(query)) {
+                return this.deleteById(query, hard);
+            }
             if (this.model[modelFactory_1.BaseCrudSymbol] && !hard) {
                 await this.update(query, { isDeleted: true, isActive: false });
             }

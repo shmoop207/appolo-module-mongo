@@ -186,8 +186,12 @@ export abstract class BaseCrudManager<K extends Schema> {
         }
     }
 
-    public async update(query: CrudItemParams<K>, update: Partial<K>, options ?: ModelUpdateOptions): Promise<void> {
+    public async update(query: CrudItemParams<K> | string | mongoose.Schema.Types.ObjectId, update: Partial<K>, options ?: ModelUpdateOptions): Promise<Doc<K> | void> {
         try {
+
+            if (!_.isPlainObject(query)) {
+                return this.updateById(query as string, update, options)
+            }
 
             if (this.model[BaseCrudSymbol]) {
                 update = {updated: Date.now(), ...options} as K & BaseCrudItem;
@@ -222,8 +226,13 @@ export abstract class BaseCrudManager<K extends Schema> {
         }
     }
 
-    public async delete(query: CrudItemParams<K>, hard ?: boolean): Promise<void> {
+    public async delete(query: CrudItemParams<K> | string | mongoose.Schema.Types.ObjectId, hard ?: boolean): Promise<void> {
         try {
+
+            if (!_.isPlainObject(query)) {
+                return this.deleteById(query as string, hard)
+            }
+
             if (this.model[BaseCrudSymbol] && !hard) {
                 await this.update(query, {isDeleted: true, isActive: false} as K & BaseCrudItem);
             } else {
