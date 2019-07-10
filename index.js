@@ -13,6 +13,7 @@ exports.index = appolo_mongo_1.index;
 exports.propArray = appolo_mongo_1.propArray;
 exports.propRef = appolo_mongo_1.propRef;
 exports.propRefArray = appolo_mongo_1.propRefArray;
+exports.ObjectId = appolo_mongo_1.ObjectId;
 const decorator_1 = require("./module/src/decorator");
 exports.model = decorator_1.model;
 exports.injectModel = decorator_1.injectModel;

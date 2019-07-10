@@ -14,7 +14,7 @@ import {
     index,
     propArray,
     propRef,
-    propRefArray
+    propRefArray, ObjectId
 } from "appolo-mongo";
 import {model, injectModel} from "./module/src/decorator";
 import {MongoModule} from "./module/mongoModule";
@@ -46,5 +46,5 @@ export {
     GetAllParams,
     model,
     pre,
-    post, propArray, index, propRef, propRefArray
+    post, propArray, index, propRef, propRefArray, ObjectId
 }
