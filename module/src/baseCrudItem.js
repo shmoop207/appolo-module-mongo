@@ -5,16 +5,20 @@ const index_1 = require("../../index");
 class BaseCrudItem extends index_1.Schema {
 }
 tslib_1.__decorate([
-    index_1.prop({ type: Boolean, default: false })
+    index_1.prop({ type: Boolean, default: false }),
+    tslib_1.__metadata("design:type", Boolean)
 ], BaseCrudItem.prototype, "isActive", void 0);
 tslib_1.__decorate([
-    index_1.prop({ type: Boolean, default: false })
+    index_1.prop({ type: Boolean, default: false }),
+    tslib_1.__metadata("design:type", Boolean)
 ], BaseCrudItem.prototype, "isDeleted", void 0);
 tslib_1.__decorate([
-    index_1.prop({ type: Number })
+    index_1.prop({ type: Number }),
+    tslib_1.__metadata("design:type", Number)
 ], BaseCrudItem.prototype, "created", void 0);
 tslib_1.__decorate([
-    index_1.prop({ type: Number })
+    index_1.prop({ type: Number }),
+    tslib_1.__metadata("design:type", Number)
 ], BaseCrudItem.prototype, "updated", void 0);
 exports.BaseCrudItem = BaseCrudItem;
 //# sourceMappingURL=baseCrudItem.js.map

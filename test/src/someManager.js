@@ -9,7 +9,8 @@ let SomeManager = class SomeManager extends index_1.BaseCrudManager {
     }
 };
 tslib_1.__decorate([
-    index_1.injectModel(testModel_1.Test)
+    index_1.injectModel(testModel_1.Test),
+    tslib_1.__metadata("design:type", Object)
 ], SomeManager.prototype, "model", void 0);
 SomeManager = tslib_1.__decorate([
     appolo_1.define(),

@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const tslib_1 = require("tslib");
+const mongoose = require("mongoose");
 const appolo_1 = require("appolo");
 let ModelRepository = class ModelRepository {
     get connection() {
@@ -12,10 +13,12 @@ let ModelRepository = class ModelRepository {
     }
 };
 tslib_1.__decorate([
-    appolo_1.inject()
+    appolo_1.inject(),
+    tslib_1.__metadata("design:type", mongoose.Connection)
 ], ModelRepository.prototype, "client", void 0);
 tslib_1.__decorate([
-    appolo_1.injectAlias("IModels", "modelName")
+    appolo_1.injectAlias("IModels", "modelName"),
+    tslib_1.__metadata("design:type", Array)
 ], ModelRepository.prototype, "models", void 0);
 ModelRepository = tslib_1.__decorate([
     appolo_1.define(),

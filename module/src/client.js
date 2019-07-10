@@ -42,13 +42,16 @@ let Client = class Client {
     }
 };
 tslib_1.__decorate([
-    appolo_1.inject()
+    appolo_1.inject(),
+    tslib_1.__metadata("design:type", Object)
 ], Client.prototype, "logger", void 0);
 tslib_1.__decorate([
-    appolo_1.inject()
+    appolo_1.inject(),
+    tslib_1.__metadata("design:type", Object)
 ], Client.prototype, "moduleOptions", void 0);
 tslib_1.__decorate([
-    appolo_1.inject()
+    appolo_1.inject(),
+    tslib_1.__metadata("design:type", Object)
 ], Client.prototype, "env", void 0);
 Client = tslib_1.__decorate([
     appolo_1.define(),

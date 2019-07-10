@@ -13,7 +13,8 @@ var Test;
 let TesRef = class TesRef extends index_1.Schema {
 };
 tslib_1.__decorate([
-    index_1.prop({ type: String, enum: Test })
+    index_1.prop({ type: String, enum: Test }),
+    tslib_1.__metadata("design:type", String)
 ], TesRef.prototype, "bla", void 0);
 TesRef = tslib_1.__decorate([
     index_1.model(),

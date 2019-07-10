@@ -166,7 +166,8 @@ class BaseCrudManager {
     }
 }
 tslib_1.__decorate([
-    appolo_1.inject()
+    appolo_1.inject(),
+    tslib_1.__metadata("design:type", Object)
 ], BaseCrudManager.prototype, "logger", void 0);
 exports.BaseCrudManager = BaseCrudManager;
 //# sourceMappingURL=baseCrudManager.js.map

@@ -28,6 +28,9 @@ export class Test extends BaseCrudItem {
     @prop(TestNested)
     nested: TestNested;
 
+    @prop(TestNested)
+    nestedArr: TestNested[];
+
     @prop({ref: TesRef})
     testRef: Ref<TesRef>;
 

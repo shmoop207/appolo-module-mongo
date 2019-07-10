@@ -37,7 +37,8 @@ let MongoModule = class MongoModule extends appolo_1.Module {
     }
 };
 MongoModule = tslib_1.__decorate([
-    appolo_1.module()
+    appolo_1.module(),
+    tslib_1.__metadata("design:paramtypes", [Object])
 ], MongoModule);
 exports.MongoModule = MongoModule;
 //# sourceMappingURL=mongoModule.js.map

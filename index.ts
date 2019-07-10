@@ -1,5 +1,21 @@
 import {ConnectionOptions} from "mongoose";
-import {Doc, Model, Schema, schema, prop, staticMethod, virtual, method, Ref, pre, post, index} from "appolo-mongo";
+import {
+    Doc,
+    Model,
+    Schema,
+    schema,
+    prop,
+    staticMethod,
+    virtual,
+    method,
+    Ref,
+    pre,
+    post,
+    index,
+    propArray,
+    propRef,
+    propRefArray
+} from "appolo-mongo";
 import {model, injectModel} from "./module/src/decorator";
 import {MongoModule} from "./module/mongoModule";
 import {ModelRepository} from "./module/src/modelRepository";
@@ -30,6 +46,5 @@ export {
     GetAllParams,
     model,
     pre,
-    post,
-    index
+    post, propArray, index, propRef, propRefArray
 }
