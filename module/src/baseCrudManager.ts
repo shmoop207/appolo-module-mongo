@@ -3,14 +3,14 @@ import Q = require('bluebird');
 import _ = require('lodash');
 import {BaseCrudItem, mongoose, Schema} from "../..";
 import {Doc, Model} from "appolo-mongo";
-import {inject} from "appolo";
+import {inject,EventDispatcher} from "appolo";
 import {ILogger} from "@appolo/logger";
 import {IBaseCrudItem, CrudItemParams, GetAllParams} from "./interfaces";
 import {BaseCrudSymbol} from "./modelFactory";
 import {ModelUpdateOptions, QueryFindOneAndUpdateOptions} from "mongoose";
 
 
-export abstract class BaseCrudManager<K extends Schema> {
+export abstract class BaseCrudManager<K extends Schema> extends EventDispatcher{
 
     @inject() logger: ILogger;
 
@@ -148,7 +148,7 @@ export abstract class BaseCrudManager<K extends Schema> {
                 } as K & BaseCrudItem;
             }
 
-            let model = new this.model(data);
+            let model = new this.model(data as any);
 
             let doc = await model.save();
 

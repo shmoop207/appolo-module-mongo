@@ -5,7 +5,7 @@ const Q = require("bluebird");
 const _ = require("lodash");
 const appolo_1 = require("appolo");
 const modelFactory_1 = require("./modelFactory");
-class BaseCrudManager {
+class BaseCrudManager extends appolo_1.EventDispatcher {
     getById(id, params = {}) {
         return this.findOne(Object.assign({}, params, { filter: { _id: id } }));
     }
