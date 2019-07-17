@@ -12,7 +12,7 @@ import {ModelUpdateOptions, QueryFindOneAndUpdateOptions} from "mongoose";
 
 export abstract class BaseCrudManager<K extends Schema> extends EventDispatcher{
 
-    @inject() logger: ILogger;
+    @inject() protected logger: ILogger;
 
     protected abstract get model(): Model<K>
 
