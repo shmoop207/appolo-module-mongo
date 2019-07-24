@@ -7,7 +7,7 @@ const appolo_1 = require("appolo");
 const modelFactory_1 = require("./modelFactory");
 class BaseCrudManager extends appolo_1.EventDispatcher {
     getById(id, params = {}) {
-        return this.findOne(Object.assign({}, params, { filter: { _id: id } }));
+        return this.findOne({ ...params, filter: { _id: id } });
     }
     async findOne(params = {}) {
         try {
@@ -92,7 +92,13 @@ class BaseCrudManager extends appolo_1.EventDispatcher {
         try {
             if (this.model[modelFactory_1.BaseCrudSymbol]) {
                 let isActive = data.isActive;
-                data = Object.assign({}, data, { created: Date.now(), updated: Date.now(), isActive: _.isBoolean(isActive) ? isActive : true, isDeleted: false });
+                data = {
+                    ...data,
+                    created: Date.now(),
+                    updated: Date.now(),
+                    isActive: _.isBoolean(isActive) ? isActive : true,
+                    isDeleted: false
+                };
             }
             let model = new this.model(data);
             let doc = await model.save();
@@ -106,9 +112,9 @@ class BaseCrudManager extends appolo_1.EventDispatcher {
     async updateById(id, data, options = {}) {
         try {
             if (this.model[modelFactory_1.BaseCrudSymbol]) {
-                data = Object.assign({ updated: Date.now() }, options);
+                data = { updated: Date.now(), ...data };
             }
-            options = Object.assign({ new: true }, options);
+            options = { new: true, ...options };
             let doc = await this.model.findByIdAndUpdate(id, data, options)
                 .exec();
             return doc;
@@ -124,7 +130,7 @@ class BaseCrudManager extends appolo_1.EventDispatcher {
                 return this.updateById(query, update, options);
             }
             if (this.model[modelFactory_1.BaseCrudSymbol]) {
-                update = Object.assign({ updated: Date.now() }, options);
+                update = { updated: Date.now(), ...options };
             }
             await this.model.updateMany(query, update, options).exec();
         }

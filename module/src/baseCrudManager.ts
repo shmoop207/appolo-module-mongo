@@ -167,7 +167,7 @@ export abstract class BaseCrudManager<K extends Schema> extends EventDispatcher{
         try {
 
             if (this.model[BaseCrudSymbol]) {
-                data = {updated: Date.now(), ...options} as K & BaseCrudItem;
+                data = {updated: Date.now(), ...data} as K & BaseCrudItem;
             }
 
             options = {new: true, ...options};
