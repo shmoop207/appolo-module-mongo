@@ -26,6 +26,8 @@ export interface GetAllParams<T> {
 
 export interface IOptions extends IModuleOptions {
     connection: string,
+    connectionId?: string
+    useConnectionId?: string
     id?: string,
     exitOnDisconnect?: boolean
     config?: ConnectionOptions

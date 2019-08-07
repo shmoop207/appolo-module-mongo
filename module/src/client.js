@@ -5,9 +5,16 @@ const appolo_1 = require("appolo");
 const mongoose = require("mongoose");
 const _ = require("lodash");
 const Q = require("bluebird");
+const ConnectionIdSymbol = Symbol("connectionId");
 let Client = class Client {
     async get() {
         try {
+            if (this.moduleOptions.useConnectionId) {
+                let conn = _.find(mongoose.connections, conn => conn[ConnectionIdSymbol] == this.moduleOptions.useConnectionId);
+                if (conn) {
+                    return conn;
+                }
+            }
             mongoose.Promise = Q;
             let connectionString = this.moduleOptions.connection;
             let mongoOptions = {
@@ -32,6 +39,9 @@ let Client = class Client {
                 this.logger.info('reconnected to mongodb', { url: connectionString });
             });
             const connection = await mongoose.createConnection(connectionString, mongoOptions);
+            if (this.moduleOptions.connectionId) {
+                connection[ConnectionIdSymbol] = this.moduleOptions.connectionId;
+            }
             this.logger.info(`mongodb connection open`);
             return connection;
         }
@@ -53,6 +63,10 @@ tslib_1.__decorate([
     appolo_1.inject(),
     tslib_1.__metadata("design:type", Object)
 ], Client.prototype, "env", void 0);
+tslib_1.__decorate([
+    appolo_1.inject(),
+    tslib_1.__metadata("design:type", appolo_1.App)
+], Client.prototype, "app", void 0);
 Client = tslib_1.__decorate([
     appolo_1.define(),
     appolo_1.singleton(),

@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const appolo_1 = require("appolo");
 const logger_1 = require("@appolo/logger");
 const mongoModule_1 = require("../module/mongoModule");
-const modelRepository_1 = require("../module//src/modelRepository");
+const modelRepository_1 = require("../module/src/modelRepository");
 const someManager_1 = require("./src/someManager");
 const chai = require("chai");
 const sinonChai = require("sinon-chai");

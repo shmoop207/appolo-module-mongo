@@ -1,11 +1,12 @@
 import {createApp} from 'appolo'
 import {LoggerModule} from '@appolo/logger';
 import {MongoModule} from "../module/mongoModule";
-import {ModelRepository} from "../module//src/modelRepository";
+import {ModelRepository} from "../module/src/modelRepository";
 import {SomeManager} from "./src/someManager";
 import chai = require('chai');
 import sinonChai = require("sinon-chai");
 import {Test} from "./src/testModel";
+
 let should = require('chai').should();
 chai.use(sinonChai);
 

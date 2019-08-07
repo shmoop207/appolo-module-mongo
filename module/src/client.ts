@@ -1,11 +1,12 @@
 "use strict";
-import {define, factory, IEnv, IFactory, inject, singleton} from 'appolo';
+import {define, factory, IEnv, IFactory, inject, singleton, App} from 'appolo';
 import {ILogger} from "@appolo/logger";
 import {IOptions} from "./interfaces";
 import mongoose = require('mongoose');
 import _ = require("lodash");
 import Q = require('bluebird');
 
+const ConnectionIdSymbol = Symbol("connectionId");
 
 @define()
 @singleton()
@@ -15,17 +16,27 @@ export class Client implements IFactory<mongoose.Connection> {
     @inject() logger: ILogger;
     @inject() moduleOptions: IOptions;
     @inject() env: IEnv;
+    @inject() app: App;
 
     public async get(): Promise<mongoose.Connection> {
 
         try {
+
+            if (this.moduleOptions.useConnectionId) {
+                let conn = _.find(mongoose.connections, conn => conn[ConnectionIdSymbol] == this.moduleOptions.useConnectionId);
+
+                if(conn){
+                    return conn
+                }
+            }
+
             mongoose.Promise = Q;
 
             let connectionString = this.moduleOptions.connection;
 
             let mongoOptions: mongoose.ConnectionOptions = {
                 keepAlive: true,
-                useFindAndModify:false,
+                useFindAndModify: false,
                 useNewUrlParser: true,
                 useCreateIndex: true,
                 autoReconnect: true,
@@ -51,7 +62,12 @@ export class Client implements IFactory<mongoose.Connection> {
                 this.logger.info('reconnected to mongodb', {url: connectionString});
             });
 
+
             const connection = await mongoose.createConnection(connectionString, mongoOptions);
+
+            if (this.moduleOptions.connectionId) {
+                connection[ConnectionIdSymbol] = this.moduleOptions.connectionId;
+            }
 
             this.logger.info(`mongodb connection open`);
 
