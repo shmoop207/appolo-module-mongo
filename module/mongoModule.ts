@@ -17,7 +17,7 @@ export class MongoModule extends Module<IOptions> {
         id: "modelRepository",
     };
 
-    protected afterInitialize() {
+    public afterInitialize() {
 
 
         let modules = Util.findAllReflectData<string>(ModelKey, this.parent.exported);
