@@ -194,7 +194,7 @@ export abstract class BaseCrudManager<K extends Schema> extends EventDispatcher{
             }
 
             if (this.model[BaseCrudSymbol]) {
-                update = {updated: Date.now(), ...options} as K & BaseCrudItem;
+                update = {updated: Date.now(), ...update} as K & BaseCrudItem;
             }
 
             await this.model.updateMany(query, update, options).exec();

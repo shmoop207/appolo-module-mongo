@@ -130,7 +130,7 @@ class BaseCrudManager extends appolo_1.EventDispatcher {
                 return this.updateById(query, update, options);
             }
             if (this.model[modelFactory_1.BaseCrudSymbol]) {
-                update = { updated: Date.now(), ...options };
+                update = { updated: Date.now(), ...update };
             }
             await this.model.updateMany(query, update, options).exec();
         }
