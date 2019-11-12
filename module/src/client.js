@@ -24,7 +24,8 @@ let Client = class Client {
                 useCreateIndex: true,
                 autoReconnect: true,
                 reconnectTries: Number.MAX_VALUE,
-                reconnectInterval: 500
+                reconnectInterval: 500,
+                useUnifiedTopology: true
             };
             if (this.moduleOptions.config) {
                 _.merge(mongoOptions, this.moduleOptions.config);

@@ -3,14 +3,14 @@ import Q = require('bluebird');
 import _ = require('lodash');
 import {BaseCrudItem, mongoose, Schema} from "../..";
 import {Doc, Model} from "appolo-mongo";
-import {inject,EventDispatcher} from "appolo";
+import {inject, EventDispatcher} from "appolo";
 import {ILogger} from "@appolo/logger";
 import {IBaseCrudItem, CrudItemParams, GetAllParams} from "./interfaces";
 import {BaseCrudSymbol} from "./modelFactory";
-import {ModelUpdateOptions, QueryFindOneAndUpdateOptions} from "mongoose";
+import {ModelUpdateOptions, Query, QueryFindOneAndUpdateOptions} from "mongoose";
 
 
-export abstract class BaseCrudManager<K extends Schema> extends EventDispatcher{
+export abstract class BaseCrudManager<K extends Schema> extends EventDispatcher {
 
     @inject() protected logger: ILogger;
 
@@ -106,7 +106,7 @@ export abstract class BaseCrudManager<K extends Schema> extends EventDispatcher{
 
         try {
 
-            let query = this.model
+            let query: Query<Doc<K>[]> = this.model
                 .find(options.filter || {})
                 .sort(options.sort || {})
                 .lean(options.lean);
@@ -245,6 +245,18 @@ export abstract class BaseCrudManager<K extends Schema> extends EventDispatcher{
 
         }
 
+    }
+
+    public cloneDocument(doc: Doc<K>): Doc<K> {
+        let newDoc = new this.model(doc.toObject());
+        return newDoc;
+    }
+
+    public cloneNewDocument(doc: Doc<K>): Doc<K> {
+        let newDoc = this.cloneDocument(doc);
+        newDoc._id = mongoose.Types.ObjectId();
+
+        return doc;
     }
 
 

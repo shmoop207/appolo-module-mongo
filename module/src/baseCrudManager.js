@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const tslib_1 = require("tslib");
 const Q = require("bluebird");
 const _ = require("lodash");
+const __1 = require("../..");
 const appolo_1 = require("appolo");
 const modelFactory_1 = require("./modelFactory");
 class BaseCrudManager extends appolo_1.EventDispatcher {
@@ -169,6 +170,15 @@ class BaseCrudManager extends appolo_1.EventDispatcher {
             this.logger.error(`${this.constructor.name} failed to delete`, { e, query });
             throw e;
         }
+    }
+    cloneDocument(doc) {
+        let newDoc = new this.model(doc.toObject());
+        return newDoc;
+    }
+    cloneNewDocument(doc) {
+        let newDoc = this.cloneDocument(doc);
+        newDoc._id = __1.mongoose.Types.ObjectId();
+        return doc;
     }
 }
 tslib_1.__decorate([
