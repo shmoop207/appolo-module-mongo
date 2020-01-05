@@ -22,9 +22,9 @@ let Client = class Client {
                 useFindAndModify: false,
                 useNewUrlParser: true,
                 useCreateIndex: true,
-                autoReconnect: true,
-                reconnectTries: Number.MAX_VALUE,
-                reconnectInterval: 500,
+                //autoReconnect: true,
+                // reconnectTries: Number.MAX_VALUE,
+                // reconnectInterval: 500,
                 useUnifiedTopology: true
             };
             if (this.moduleOptions.config) {
