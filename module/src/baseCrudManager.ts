@@ -26,7 +26,7 @@ export abstract class BaseCrudManager<K extends Schema> extends EventDispatcher 
         try {
 
             let query = this.model
-                .findOne(params.filter || {});
+                .findOne(params.filter as object || {});
 
             if (params.fields) {
                 query.select(params.fields);
@@ -107,7 +107,7 @@ export abstract class BaseCrudManager<K extends Schema> extends EventDispatcher 
         try {
 
             let query: Query<Doc<K>[]> = this.model
-                .find(options.filter || {})
+                .find(options.filter as object || {})
                 .sort(options.sort || {})
                 .lean(options.lean);
 
@@ -197,7 +197,7 @@ export abstract class BaseCrudManager<K extends Schema> extends EventDispatcher 
                 update = {updated: Date.now(), ...update} as K & BaseCrudItem;
             }
 
-            await this.model.updateMany(query, update, options).exec();
+            await this.model.updateMany(query as object, update, options).exec();
 
         } catch
             (e) {
@@ -236,7 +236,7 @@ export abstract class BaseCrudManager<K extends Schema> extends EventDispatcher 
             if (this.model[BaseCrudSymbol] && !hard) {
                 await this.update(query, {isDeleted: true, isActive: false} as K & BaseCrudItem);
             } else {
-                await this.model.deleteMany(query).exec()
+                await this.model.deleteMany(query as object).exec()
             }
         } catch
             (e) {

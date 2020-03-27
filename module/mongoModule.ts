@@ -13,6 +13,10 @@ export class MongoModule extends Module<IOptions> {
         super(options);
     }
 
+    public static for(options: IOptions): MongoModule {
+        return new MongoModule(options)
+    }
+
     protected readonly Defaults: Partial<IOptions> = {
         id: "modelRepository",
     };

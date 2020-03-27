@@ -1,4 +1,5 @@
 "use strict";
+var MongoModule_1;
 Object.defineProperty(exports, "__esModule", { value: true });
 const tslib_1 = require("tslib");
 const appolo_1 = require("appolo");
@@ -6,12 +7,15 @@ const modelRepository_1 = require("./src/modelRepository");
 const decorator_1 = require("./src/decorator");
 const modelFactory_1 = require("./src/modelFactory");
 const _ = require("lodash");
-let MongoModule = class MongoModule extends appolo_1.Module {
+let MongoModule = MongoModule_1 = class MongoModule extends appolo_1.Module {
     constructor(options) {
         super(options);
         this.Defaults = {
             id: "modelRepository",
         };
+    }
+    static for(options) {
+        return new MongoModule_1(options);
     }
     afterInitialize() {
         let modules = appolo_1.Util.findAllReflectData(decorator_1.ModelKey, this.parent.exported);
@@ -36,7 +40,7 @@ let MongoModule = class MongoModule extends appolo_1.Module {
         return [{ id: this.moduleOptions.id, type: modelRepository_1.ModelRepository }];
     }
 };
-MongoModule = tslib_1.__decorate([
+MongoModule = MongoModule_1 = tslib_1.__decorate([
     appolo_1.module(),
     tslib_1.__metadata("design:paramtypes", [Object])
 ], MongoModule);
