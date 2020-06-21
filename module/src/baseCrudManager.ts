@@ -8,11 +8,18 @@ import {ILogger} from "@appolo/logger";
 import {IBaseCrudItem, CrudItemParams, GetAllParams} from "./interfaces";
 import {BaseCrudSymbol} from "./modelFactory";
 import {ModelUpdateOptions, Query, QueryFindOneAndUpdateOptions} from "mongoose";
+import {Event, IEvent} from "appolo-event-dispatcher";
 
 
-export abstract class BaseCrudManager<K extends Schema> extends EventDispatcher {
+export abstract class BaseCrudManager<K extends Schema> {
 
-    @inject() protected logger: ILogger;
+
+    @inject() private _logger: ILogger;
+
+    private readonly _itemCreatedEvent = new Event<{ item: Doc<K> }>({await: true});
+    private readonly _itemCreatedOrUpdatedEvent = new Event<{ item: Doc<K>, previous?: Doc<K> }>({await: true});
+    private readonly _itemUpdatedEvent = new Event<{ item: Doc<K>, previous: Doc<K> }>({await: true});
+
 
     protected abstract get model(): Model<K>
 
@@ -50,7 +57,7 @@ export abstract class BaseCrudManager<K extends Schema> extends EventDispatcher 
 
         } catch
             (e) {
-            this.logger.error(`failed to findOne ${this.constructor.name}`, {e, params});
+            this._logger.error(`failed to findOne ${this.constructor.name}`, {e, params});
 
             throw e;
         }
@@ -96,7 +103,7 @@ export abstract class BaseCrudManager<K extends Schema> extends EventDispatcher 
             return {results: results as Doc<K>[], count: count || (results as Doc<K>[]).length};
         } catch
             (e) {
-            this.logger.error(`${this.constructor.name} failed to getAll`, {e, params});
+            this._logger.error(`${this.constructor.name} failed to getAll`, {e, params});
 
             throw e;
         }
@@ -125,7 +132,7 @@ export abstract class BaseCrudManager<K extends Schema> extends EventDispatcher 
 
         } catch
             (e) {
-            this.logger.error(`failed to findAll ${this.constructor.name}`, {e});
+            this._logger.error(`failed to findAll ${this.constructor.name}`, {e});
 
             throw e;
         }
@@ -150,12 +157,17 @@ export abstract class BaseCrudManager<K extends Schema> extends EventDispatcher 
 
             let model = new this.model(data as any);
 
-            let doc = await model.save();
+            let item = await model.save();
 
-            return doc;
+            await Promise.all([
+                this._itemCreatedEvent.fireEvent({item}),
+                this._itemCreatedOrUpdatedEvent.fireEvent({item})
+            ]);
+
+            return item;
         } catch
             (e) {
-            this.logger.error(`${this.constructor.name} failed to create`, {e, data});
+            this._logger.error(`${this.constructor.name} failed to create`, {e, data});
 
             throw e;
         }
@@ -166,32 +178,34 @@ export abstract class BaseCrudManager<K extends Schema> extends EventDispatcher 
 
         try {
 
+            let previous = await this.getById(id);
+
             if (this.model[BaseCrudSymbol]) {
                 data = {updated: Date.now(), ...data} as K & BaseCrudItem;
             }
 
             options = {new: true, ...options};
 
-            let doc = await this.model.findByIdAndUpdate(id, data, options)
+            let item = await this.model.findByIdAndUpdate(id, data, options)
                 .exec();
 
-            return doc;
+            await Promise.all([
+                this._itemUpdatedEvent.fireEvent({item, previous}),
+                this._itemCreatedOrUpdatedEvent.fireEvent({item: item, previous})
+            ]);
 
-        } catch
-            (e) {
+            return item;
 
-            this.logger.error(`${this.constructor.name} failed to update`, {e, data});
+        } catch (e) {
+
+            this._logger.error(`${this.constructor.name} failed to update`, {e, data});
 
             throw e;
         }
     }
 
-    public async update(query: CrudItemParams<K> | string | mongoose.Schema.Types.ObjectId, update: Partial<K>, options ?: ModelUpdateOptions): Promise<Doc<K> | void> {
+    public async updateAll(query: CrudItemParams<K> | string | mongoose.Schema.Types.ObjectId, update: Partial<K>, options ?: ModelUpdateOptions): Promise<Doc<K> | void> {
         try {
-
-            if (!_.isPlainObject(query)) {
-                return this.updateById(query as string, update, options)
-            }
 
             if (this.model[BaseCrudSymbol]) {
                 update = {updated: Date.now(), ...update} as K & BaseCrudItem;
@@ -199,9 +213,8 @@ export abstract class BaseCrudManager<K extends Schema> extends EventDispatcher 
 
             await this.model.updateMany(query as object, update, options).exec();
 
-        } catch
-            (e) {
-            this.logger.error(`${this.constructor.name} failed to updateMulti`, {e, query});
+        } catch (e) {
+            this._logger.error(`${this.constructor.name} failed to updateMulti`, {e, query});
             throw e
 
         }
@@ -218,15 +231,14 @@ export abstract class BaseCrudManager<K extends Schema> extends EventDispatcher 
 
                 await this.model.findByIdAndDelete(id).exec()
             }
-        } catch
-            (e) {
-            this.logger.error(`${this.constructor.name} failed to deleteById`, {e, id});
+        } catch (e) {
+            this._logger.error(`${this.constructor.name} failed to deleteById`, {e, id});
             throw e
 
         }
     }
 
-    public async delete(query: CrudItemParams<K> | string | mongoose.Schema.Types.ObjectId, hard ?: boolean): Promise<void> {
+    public async deleteAll(query: CrudItemParams<K> | string | mongoose.Schema.Types.ObjectId, hard ?: boolean): Promise<void> {
         try {
 
             if (!_.isPlainObject(query)) {
@@ -234,13 +246,12 @@ export abstract class BaseCrudManager<K extends Schema> extends EventDispatcher 
             }
 
             if (this.model[BaseCrudSymbol] && !hard) {
-                await this.update(query, {isDeleted: true, isActive: false} as K & BaseCrudItem);
+                await this.updateAll(query, {isDeleted: true, isActive: false} as K & BaseCrudItem);
             } else {
                 await this.model.deleteMany(query as object).exec()
             }
-        } catch
-            (e) {
-            this.logger.error(`${this.constructor.name} failed to delete`, {e, query});
+        } catch (e) {
+            this._logger.error(`${this.constructor.name} failed to delete`, {e, query});
             throw e
 
         }
@@ -257,6 +268,18 @@ export abstract class BaseCrudManager<K extends Schema> extends EventDispatcher 
         newDoc._id = mongoose.Types.ObjectId();
 
         return doc;
+    }
+
+    public get itemCreatedEvent(): IEvent<{ item: Doc<K> }> {
+        return this._itemCreatedEvent;
+    }
+
+    public get itemCreatedOrUpdatedEvent(): IEvent<{ item: Doc<K>, previous?: Doc<K> }> {
+        return this._itemCreatedOrUpdatedEvent;
+    }
+
+    public get itemUpdatedEvent(): IEvent<{ item: Doc<K>, previous?: Doc<K> }> {
+        return this._itemUpdatedEvent;
     }
 
 

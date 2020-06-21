@@ -1,6 +1,6 @@
 {
   "name": "@appolo/mongo",
-  "version": "7.0.1",
+  "version": "7.1.0",
   "description": "appolo mongo module",
   "publishConfig": {
     "access": "public"
@@ -8,7 +8,7 @@
   "keywords": [],
   "main": "index.js",
   "dependencies": {
-    "@appolo/logger": "^7.0.0",
+    "@appolo/logger": "^7.0.1",
     "appolo": "^7.0.2",
     "appolo-mongo": "^0.0.8",
     "bluebird": "^3.7.2",

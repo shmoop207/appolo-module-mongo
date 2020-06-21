@@ -6,7 +6,13 @@ const _ = require("lodash");
 const __1 = require("../..");
 const appolo_1 = require("appolo");
 const modelFactory_1 = require("./modelFactory");
-class BaseCrudManager extends appolo_1.EventDispatcher {
+const appolo_event_dispatcher_1 = require("appolo-event-dispatcher");
+class BaseCrudManager {
+    constructor() {
+        this._itemCreatedEvent = new appolo_event_dispatcher_1.Event({ await: true });
+        this._itemCreatedOrUpdatedEvent = new appolo_event_dispatcher_1.Event({ await: true });
+        this._itemUpdatedEvent = new appolo_event_dispatcher_1.Event({ await: true });
+    }
     getById(id, params = {}) {
         return this.findOne({ ...params, filter: { _id: id } });
     }
@@ -30,7 +36,7 @@ class BaseCrudManager extends appolo_1.EventDispatcher {
             return item;
         }
         catch (e) {
-            this.logger.error(`failed to findOne ${this.constructor.name}`, { e, params });
+            this._logger.error(`failed to findOne ${this.constructor.name}`, { e, params });
             throw e;
         }
     }
@@ -65,7 +71,7 @@ class BaseCrudManager extends appolo_1.EventDispatcher {
             return { results: results, count: count || results.length };
         }
         catch (e) {
-            this.logger.error(`${this.constructor.name} failed to getAll`, { e, params });
+            this._logger.error(`${this.constructor.name} failed to getAll`, { e, params });
             throw e;
         }
     }
@@ -85,7 +91,7 @@ class BaseCrudManager extends appolo_1.EventDispatcher {
             return items;
         }
         catch (e) {
-            this.logger.error(`failed to findAll ${this.constructor.name}`, { e });
+            this._logger.error(`failed to findAll ${this.constructor.name}`, { e });
             throw e;
         }
     }
@@ -102,41 +108,47 @@ class BaseCrudManager extends appolo_1.EventDispatcher {
                 };
             }
             let model = new this.model(data);
-            let doc = await model.save();
-            return doc;
+            let item = await model.save();
+            await Promise.all([
+                this._itemCreatedEvent.fireEvent({ item }),
+                this._itemCreatedOrUpdatedEvent.fireEvent({ item })
+            ]);
+            return item;
         }
         catch (e) {
-            this.logger.error(`${this.constructor.name} failed to create`, { e, data });
+            this._logger.error(`${this.constructor.name} failed to create`, { e, data });
             throw e;
         }
     }
     async updateById(id, data, options = {}) {
         try {
+            let previous = await this.getById(id);
             if (this.model[modelFactory_1.BaseCrudSymbol]) {
                 data = { updated: Date.now(), ...data };
             }
             options = { new: true, ...options };
-            let doc = await this.model.findByIdAndUpdate(id, data, options)
+            let item = await this.model.findByIdAndUpdate(id, data, options)
                 .exec();
-            return doc;
+            await Promise.all([
+                this._itemUpdatedEvent.fireEvent({ item, previous }),
+                this._itemCreatedOrUpdatedEvent.fireEvent({ item: item, previous })
+            ]);
+            return item;
         }
         catch (e) {
-            this.logger.error(`${this.constructor.name} failed to update`, { e, data });
+            this._logger.error(`${this.constructor.name} failed to update`, { e, data });
             throw e;
         }
     }
-    async update(query, update, options) {
+    async updateAll(query, update, options) {
         try {
-            if (!_.isPlainObject(query)) {
-                return this.updateById(query, update, options);
-            }
             if (this.model[modelFactory_1.BaseCrudSymbol]) {
                 update = { updated: Date.now(), ...update };
             }
             await this.model.updateMany(query, update, options).exec();
         }
         catch (e) {
-            this.logger.error(`${this.constructor.name} failed to updateMulti`, { e, query });
+            this._logger.error(`${this.constructor.name} failed to updateMulti`, { e, query });
             throw e;
         }
     }
@@ -150,24 +162,24 @@ class BaseCrudManager extends appolo_1.EventDispatcher {
             }
         }
         catch (e) {
-            this.logger.error(`${this.constructor.name} failed to deleteById`, { e, id });
+            this._logger.error(`${this.constructor.name} failed to deleteById`, { e, id });
             throw e;
         }
     }
-    async delete(query, hard) {
+    async deleteAll(query, hard) {
         try {
             if (!_.isPlainObject(query)) {
                 return this.deleteById(query, hard);
             }
             if (this.model[modelFactory_1.BaseCrudSymbol] && !hard) {
-                await this.update(query, { isDeleted: true, isActive: false });
+                await this.updateAll(query, { isDeleted: true, isActive: false });
             }
             else {
                 await this.model.deleteMany(query).exec();
             }
         }
         catch (e) {
-            this.logger.error(`${this.constructor.name} failed to delete`, { e, query });
+            this._logger.error(`${this.constructor.name} failed to delete`, { e, query });
             throw e;
         }
     }
@@ -180,10 +192,19 @@ class BaseCrudManager extends appolo_1.EventDispatcher {
         newDoc._id = __1.mongoose.Types.ObjectId();
         return doc;
     }
+    get itemCreatedEvent() {
+        return this._itemCreatedEvent;
+    }
+    get itemCreatedOrUpdatedEvent() {
+        return this._itemCreatedOrUpdatedEvent;
+    }
+    get itemUpdatedEvent() {
+        return this._itemUpdatedEvent;
+    }
 }
 tslib_1.__decorate([
     appolo_1.inject(),
     tslib_1.__metadata("design:type", Object)
-], BaseCrudManager.prototype, "logger", void 0);
+], BaseCrudManager.prototype, "_logger", void 0);
 exports.BaseCrudManager = BaseCrudManager;
 //# sourceMappingURL=baseCrudManager.js.map
