@@ -36,7 +36,7 @@ class BaseCrudManager {
             return item;
         }
         catch (e) {
-            this._logger.error(`failed to findOne ${this.constructor.name}`, { e, params });
+            this.logger.error(`failed to findOne ${this.constructor.name}`, { e, params });
             throw e;
         }
     }
@@ -71,7 +71,7 @@ class BaseCrudManager {
             return { results: results, count: count || results.length };
         }
         catch (e) {
-            this._logger.error(`${this.constructor.name} failed to getAll`, { e, params });
+            this.logger.error(`${this.constructor.name} failed to getAll`, { e, params });
             throw e;
         }
     }
@@ -91,7 +91,7 @@ class BaseCrudManager {
             return items;
         }
         catch (e) {
-            this._logger.error(`failed to findAll ${this.constructor.name}`, { e });
+            this.logger.error(`failed to findAll ${this.constructor.name}`, { e });
             throw e;
         }
     }
@@ -116,7 +116,7 @@ class BaseCrudManager {
             return item;
         }
         catch (e) {
-            this._logger.error(`${this.constructor.name} failed to create`, { e, data });
+            this.logger.error(`${this.constructor.name} failed to create`, { e, data });
             throw e;
         }
     }
@@ -136,7 +136,7 @@ class BaseCrudManager {
             return item;
         }
         catch (e) {
-            this._logger.error(`${this.constructor.name} failed to update`, { e, data });
+            this.logger.error(`${this.constructor.name} failed to update`, { e, data });
             throw e;
         }
     }
@@ -148,7 +148,7 @@ class BaseCrudManager {
             await this.model.updateMany(query, update, options).exec();
         }
         catch (e) {
-            this._logger.error(`${this.constructor.name} failed to updateMulti`, { e, query });
+            this.logger.error(`${this.constructor.name} failed to updateMulti`, { e, query });
             throw e;
         }
     }
@@ -162,7 +162,7 @@ class BaseCrudManager {
             }
         }
         catch (e) {
-            this._logger.error(`${this.constructor.name} failed to deleteById`, { e, id });
+            this.logger.error(`${this.constructor.name} failed to deleteById`, { e, id });
             throw e;
         }
     }
@@ -179,7 +179,7 @@ class BaseCrudManager {
             }
         }
         catch (e) {
-            this._logger.error(`${this.constructor.name} failed to delete`, { e, query });
+            this.logger.error(`${this.constructor.name} failed to delete`, { e, query });
             throw e;
         }
     }
@@ -205,6 +205,6 @@ class BaseCrudManager {
 tslib_1.__decorate([
     appolo_1.inject(),
     tslib_1.__metadata("design:type", Object)
-], BaseCrudManager.prototype, "_logger", void 0);
+], BaseCrudManager.prototype, "logger", void 0);
 exports.BaseCrudManager = BaseCrudManager;
 //# sourceMappingURL=baseCrudManager.js.map

@@ -14,11 +14,11 @@ import {Event, IEvent} from "appolo-event-dispatcher";
 export abstract class BaseCrudManager<K extends Schema> {
 
 
-    @inject() private _logger: ILogger;
+    @inject() protected logger: ILogger;
 
-    private readonly _itemCreatedEvent = new Event<{ item: Doc<K> }>({await: true});
-    private readonly _itemCreatedOrUpdatedEvent = new Event<{ item: Doc<K>, previous?: Doc<K> }>({await: true});
-    private readonly _itemUpdatedEvent = new Event<{ item: Doc<K>, previous: Doc<K> }>({await: true});
+    protected readonly _itemCreatedEvent = new Event<{ item: Doc<K> }>({await: true});
+    protected readonly _itemCreatedOrUpdatedEvent = new Event<{ item: Doc<K>, previous?: Doc<K> }>({await: true});
+    protected readonly _itemUpdatedEvent = new Event<{ item: Doc<K>, previous: Doc<K> }>({await: true});
 
 
     protected abstract get model(): Model<K>
@@ -57,7 +57,7 @@ export abstract class BaseCrudManager<K extends Schema> {
 
         } catch
             (e) {
-            this._logger.error(`failed to findOne ${this.constructor.name}`, {e, params});
+            this.logger.error(`failed to findOne ${this.constructor.name}`, {e, params});
 
             throw e;
         }
@@ -103,7 +103,7 @@ export abstract class BaseCrudManager<K extends Schema> {
             return {results: results as Doc<K>[], count: count || (results as Doc<K>[]).length};
         } catch
             (e) {
-            this._logger.error(`${this.constructor.name} failed to getAll`, {e, params});
+            this.logger.error(`${this.constructor.name} failed to getAll`, {e, params});
 
             throw e;
         }
@@ -132,7 +132,7 @@ export abstract class BaseCrudManager<K extends Schema> {
 
         } catch
             (e) {
-            this._logger.error(`failed to findAll ${this.constructor.name}`, {e});
+            this.logger.error(`failed to findAll ${this.constructor.name}`, {e});
 
             throw e;
         }
@@ -167,7 +167,7 @@ export abstract class BaseCrudManager<K extends Schema> {
             return item;
         } catch
             (e) {
-            this._logger.error(`${this.constructor.name} failed to create`, {e, data});
+            this.logger.error(`${this.constructor.name} failed to create`, {e, data});
 
             throw e;
         }
@@ -198,7 +198,7 @@ export abstract class BaseCrudManager<K extends Schema> {
 
         } catch (e) {
 
-            this._logger.error(`${this.constructor.name} failed to update`, {e, data});
+            this.logger.error(`${this.constructor.name} failed to update`, {e, data});
 
             throw e;
         }
@@ -214,7 +214,7 @@ export abstract class BaseCrudManager<K extends Schema> {
             await this.model.updateMany(query as object, update, options).exec();
 
         } catch (e) {
-            this._logger.error(`${this.constructor.name} failed to updateMulti`, {e, query});
+            this.logger.error(`${this.constructor.name} failed to updateMulti`, {e, query});
             throw e
 
         }
@@ -232,7 +232,7 @@ export abstract class BaseCrudManager<K extends Schema> {
                 await this.model.findByIdAndDelete(id).exec()
             }
         } catch (e) {
-            this._logger.error(`${this.constructor.name} failed to deleteById`, {e, id});
+            this.logger.error(`${this.constructor.name} failed to deleteById`, {e, id});
             throw e
 
         }
@@ -251,7 +251,7 @@ export abstract class BaseCrudManager<K extends Schema> {
                 await this.model.deleteMany(query as object).exec()
             }
         } catch (e) {
-            this._logger.error(`${this.constructor.name} failed to delete`, {e, query});
+            this.logger.error(`${this.constructor.name} failed to delete`, {e, query});
             throw e
 
         }
