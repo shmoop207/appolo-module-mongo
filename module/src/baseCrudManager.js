@@ -124,7 +124,7 @@ class BaseCrudManager {
         try {
             let previous = await this.getById(id);
             if (this.model[modelFactory_1.BaseCrudSymbol]) {
-                data = { updated: Date.now(), ...data };
+                data = { ...data, updated: Date.now() };
             }
             options = { new: true, ...options };
             let item = await this.model.findByIdAndUpdate(id, data, options)

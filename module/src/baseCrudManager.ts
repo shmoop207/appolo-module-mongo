@@ -181,7 +181,7 @@ export abstract class BaseCrudManager<K extends Schema> {
             let previous = await this.getById(id);
 
             if (this.model[BaseCrudSymbol]) {
-                data = {updated: Date.now(), ...data} as K & BaseCrudItem;
+                data = {...data, updated: Date.now()} as K & BaseCrudItem;
             }
 
             options = {new: true, ...options};
