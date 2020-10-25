@@ -153,6 +153,7 @@ class BaseCrudManager {
             }
             await this.beforeUpdateById(id, data, previous);
             let item = this.cloneDocument(previous);
+            item.isNew = false;
             _.extend(item, data);
             await item.save();
             await Promise.all([

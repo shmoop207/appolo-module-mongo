@@ -224,6 +224,8 @@ export abstract class BaseCrudManager<K extends Schema> {
 
             let item = this.cloneDocument(previous);
 
+            item.isNew = false;
+
             _.extend(item, data);
 
             await item.save();
