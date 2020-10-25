@@ -1,6 +1,7 @@
 "use strict";
 var MongoModule_1;
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.MongoModule = void 0;
 const tslib_1 = require("tslib");
 const appolo_1 = require("appolo");
 const modelRepository_1 = require("./src/modelRepository");

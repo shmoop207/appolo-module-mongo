@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.BaseCrudManager = void 0;
 const tslib_1 = require("tslib");
 const Q = require("bluebird");
 const _ = require("lodash");
@@ -127,6 +128,7 @@ class BaseCrudManager {
                 data = { ...data, updated: Date.now() };
             }
             options = { new: true, ...options };
+            await this.beforeUpdateById(id, data, previous);
             let item = await this.model.findByIdAndUpdate(id, data, options)
                 .exec();
             await Promise.all([
@@ -139,6 +141,32 @@ class BaseCrudManager {
             this.logger.error(`${this.constructor.name} failed to update`, { e, data });
             throw e;
         }
+    }
+    async updateByIdAndSave(id, data) {
+        try {
+            let previous = await this.getById(id);
+            if (!previous) {
+                throw new Error(`failed to find item for id ${id} ${this.constructor.name}`);
+            }
+            if (this.model[modelFactory_1.BaseCrudSymbol]) {
+                data = { ...data, updated: Date.now() };
+            }
+            await this.beforeUpdateById(id, data, previous);
+            let item = this.cloneDocument(previous);
+            _.extend(item, data);
+            await item.save();
+            await Promise.all([
+                this._itemUpdatedEvent.fireEvent({ item, previous }),
+                this._itemCreatedOrUpdatedEvent.fireEvent({ item: item, previous })
+            ]);
+            return item;
+        }
+        catch (e) {
+            this.logger.error(`${this.constructor.name} failed to update`, { e, data });
+            throw e;
+        }
+    }
+    beforeUpdateById(id, data, previous) {
     }
     async updateAll(query, update, options) {
         try {

@@ -186,7 +186,9 @@ export abstract class BaseCrudManager<K extends Schema> {
 
             options = {new: true, ...options};
 
-            let item = await this.model.findByIdAndUpdate(id, data, options)
+            await this.beforeUpdateById(id, data, previous);
+
+            let item = await this.model.findByIdAndUpdate(id, data as K & BaseCrudItem, options)
                 .exec();
 
             await Promise.all([
@@ -204,6 +206,47 @@ export abstract class BaseCrudManager<K extends Schema> {
         }
     }
 
+    public async updateByIdAndSave(id: string, data: Partial<K>): Promise<Doc<K>> {
+
+        try {
+
+            let previous = await this.getById(id);
+
+            if (!previous) {
+                throw new Error(`failed to find item for id ${id} ${this.constructor.name}`);
+            }
+
+            if (this.model[BaseCrudSymbol]) {
+                data = {...data, updated: Date.now()} as K & BaseCrudItem;
+            }
+
+            await this.beforeUpdateById(id, data, previous);
+
+            let item = this.cloneDocument(previous);
+
+            _.extend(item, data);
+
+            await item.save();
+
+            await Promise.all([
+                this._itemUpdatedEvent.fireEvent({item, previous}),
+                this._itemCreatedOrUpdatedEvent.fireEvent({item: item, previous})
+            ]);
+
+            return item;
+
+        } catch (e) {
+
+            this.logger.error(`${this.constructor.name} failed to update`, {e, data});
+
+            throw e;
+        }
+    }
+
+    protected beforeUpdateById(id: string, data: Partial<K>, previous: Doc<K>) {
+
+    }
+
     public async updateAll(query: CrudItemParams<K> | string | mongoose.Schema.Types.ObjectId, update: Partial<K>, options ?: ModelUpdateOptions): Promise<Doc<K> | void> {
         try {
 
@@ -211,7 +254,7 @@ export abstract class BaseCrudManager<K extends Schema> {
                 update = {updated: Date.now(), ...update} as K & BaseCrudItem;
             }
 
-            await this.model.updateMany(query as object, update, options).exec();
+            await this.model.updateMany(query as object, update as K & BaseCrudItem, options).exec();
 
         } catch (e) {
             this.logger.error(`${this.constructor.name} failed to updateMulti`, {e, query});

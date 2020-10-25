@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.injectModel = exports.model = exports.InjectModelKey = exports.ModelKey = void 0;
 require("reflect-metadata");
 const appolo_1 = require("appolo");
 exports.ModelKey = Symbol("model");

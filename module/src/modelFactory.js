@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.ModelFactory = exports.BaseCrudSymbol = void 0;
 const __1 = require("../..");
 exports.BaseCrudSymbol = Symbol("baseCrudSymbol");
 class ModelFactory {
