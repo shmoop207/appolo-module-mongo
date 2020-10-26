@@ -210,9 +210,9 @@ export abstract class BaseCrudManager<K extends Schema> {
 
         try {
 
-            let previous = await this.getById(id);
+            let item = await this.getById(id);
 
-            if (!previous) {
+            if (!item) {
                 throw new Error(`failed to find item for id ${id} ${this.constructor.name}`);
             }
 
@@ -220,11 +220,11 @@ export abstract class BaseCrudManager<K extends Schema> {
                 data = {...data, updated: Date.now()} as K & BaseCrudItem;
             }
 
-            await this.beforeUpdateById(id, data, previous);
+            await this.beforeUpdateById(id, data, item);
 
-            let item = this.cloneDocument(previous);
+            let previous = this.cloneDocument(item);
 
-            item.isNew = false;
+            previous.isNew = false;
 
             _.extend(item, data);
 

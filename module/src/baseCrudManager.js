@@ -144,16 +144,16 @@ class BaseCrudManager {
     }
     async updateByIdAndSave(id, data) {
         try {
-            let previous = await this.getById(id);
-            if (!previous) {
+            let item = await this.getById(id);
+            if (!item) {
                 throw new Error(`failed to find item for id ${id} ${this.constructor.name}`);
             }
             if (this.model[modelFactory_1.BaseCrudSymbol]) {
                 data = { ...data, updated: Date.now() };
             }
-            await this.beforeUpdateById(id, data, previous);
-            let item = this.cloneDocument(previous);
-            item.isNew = false;
+            await this.beforeUpdateById(id, data, item);
+            let previous = this.cloneDocument(item);
+            previous.isNew = false;
             _.extend(item, data);
             await item.save();
             await Promise.all([
