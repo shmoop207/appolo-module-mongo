@@ -1,28 +1,31 @@
 import "reflect-metadata";
-import {Util} from 'appolo';
 import {Schema} from 'appolo-mongo';
+import {Classes, Reflector} from '@appolo/utils';
 
 
 export const ModelKey = Symbol("model");
 export const InjectModelKey = Symbol("injectModel");
 
 
-export function model(name?: string) {
+export function model(name?: string| typeof Schema) {
 
-    return function (fn: typeof Schema) {
+    return function (fn: any, propertyKey?: string, descriptor?: PropertyDescriptor) {
+        if (propertyKey) {
+            return injectModel(name)(fn, propertyKey, descriptor)
+        }
 
-        name = name || Util.getClassName(fn) + "Model";
+        name = name || Classes.className(fn) + "Model";
         Reflect.defineMetadata(ModelKey, name, fn);
     }
 }
 
-export function injectModel(model: string | typeof Schema) {
+function injectModel(model: string | typeof Schema) {
 
     return function (fn: any, propertyKey: string, descriptor?: PropertyDescriptor) {
 
-        let models = Util.getReflectData(InjectModelKey, fn.constructor, []);
+        let models = Reflector.getFnMetadata(InjectModelKey, fn.constructor, []);
 
-        models.push({fn, propertyKey,model})
+        models.push({fn, propertyKey, model})
 
     }
 }

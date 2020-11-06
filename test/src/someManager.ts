@@ -1,11 +1,11 @@
-import {define,singleton,inject} from 'appolo'
+import {define,singleton,inject} from '@appolo/inject'
 import {Test} from "./testModel";
-import {Model, injectModel, BaseCrudManager} from "../../index";
+import {Model, model, BaseCrudManager} from "../../index";
 
 @define()
 @singleton()
 export class SomeManager  extends BaseCrudManager<Test>{
-    @injectModel(Test) model: Model<Test> & typeof Test
+    @model(Test) model: Model<Test> & typeof Test
 
     test(){
 

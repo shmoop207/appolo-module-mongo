@@ -3,12 +3,12 @@ import Q = require('bluebird');
 import _ = require('lodash');
 import {BaseCrudItem, mongoose, Schema} from "../..";
 import {Doc, Model} from "appolo-mongo";
-import {inject, EventDispatcher} from "appolo";
+import {inject} from "@appolo/inject";
 import {ILogger} from "@appolo/logger";
 import {IBaseCrudItem, CrudItemParams, GetAllParams} from "./interfaces";
 import {BaseCrudSymbol} from "./modelFactory";
 import {ModelUpdateOptions, Query, QueryFindOneAndUpdateOptions} from "mongoose";
-import {Event, IEvent} from "appolo-event-dispatcher";
+import {Event, IEvent} from "@appolo/events";
 
 
 export abstract class BaseCrudManager<K extends Schema> {

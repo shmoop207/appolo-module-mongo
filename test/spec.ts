@@ -1,4 +1,4 @@
-import {createApp} from 'appolo'
+import {createApp} from '@appolo/core'
 import {LoggerModule} from '@appolo/logger';
 import {MongoModule} from "../module/mongoModule";
 import {ModelRepository} from "../module/src/modelRepository";
@@ -15,9 +15,9 @@ describe("mongo module Spec", function () {
 
         let app = createApp({root: __dirname, environment: "production", port: 8184});
 
-        await app.module(LoggerModule);
+        await app.module.load(LoggerModule);
 
-        await app.module(new MongoModule({connection: process.env.MONGO}));
+        await app.module.use(MongoModule.for({connection: process.env.MONGO}));
 
         await app.launch();
 

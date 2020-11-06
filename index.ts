@@ -16,7 +16,7 @@ import {
     propRef,
     propRefArray, ObjectId
 } from "appolo-mongo";
-import {model, injectModel} from "./module/src/decorator";
+import {model} from "./module/src/decorator";
 import {MongoModule} from "./module/mongoModule";
 import {ModelRepository} from "./module/src/modelRepository";
 import {BaseCrudManager} from "./module/src/baseCrudManager";
@@ -28,7 +28,6 @@ export import mongoose = require('mongoose');
 
 export {
     ConnectionOptions, ModelRepository,
-    injectModel,
     Ref,
     staticMethod,
     virtual,

@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ObjectId = exports.propRefArray = exports.propRef = exports.index = exports.propArray = exports.post = exports.pre = exports.model = exports.BaseCrudManager = exports.BaseCrudItem = exports.prop = exports.schema = exports.Schema = exports.MongoModule = exports.method = exports.virtual = exports.staticMethod = exports.injectModel = exports.ModelRepository = void 0;
+exports.ObjectId = exports.propRefArray = exports.propRef = exports.index = exports.propArray = exports.post = exports.pre = exports.model = exports.BaseCrudManager = exports.BaseCrudItem = exports.prop = exports.schema = exports.Schema = exports.MongoModule = exports.method = exports.virtual = exports.staticMethod = exports.ModelRepository = void 0;
 const appolo_mongo_1 = require("appolo-mongo");
 Object.defineProperty(exports, "Schema", { enumerable: true, get: function () { return appolo_mongo_1.Schema; } });
 Object.defineProperty(exports, "schema", { enumerable: true, get: function () { return appolo_mongo_1.schema; } });
@@ -17,7 +17,6 @@ Object.defineProperty(exports, "propRefArray", { enumerable: true, get: function
 Object.defineProperty(exports, "ObjectId", { enumerable: true, get: function () { return appolo_mongo_1.ObjectId; } });
 const decorator_1 = require("./module/src/decorator");
 Object.defineProperty(exports, "model", { enumerable: true, get: function () { return decorator_1.model; } });
-Object.defineProperty(exports, "injectModel", { enumerable: true, get: function () { return decorator_1.injectModel; } });
 const mongoModule_1 = require("./module/mongoModule");
 Object.defineProperty(exports, "MongoModule", { enumerable: true, get: function () { return mongoModule_1.MongoModule; } });
 const modelRepository_1 = require("./module/src/modelRepository");

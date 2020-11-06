@@ -5,14 +5,14 @@ const tslib_1 = require("tslib");
 const Q = require("bluebird");
 const _ = require("lodash");
 const __1 = require("../..");
-const appolo_1 = require("appolo");
+const inject_1 = require("@appolo/inject");
 const modelFactory_1 = require("./modelFactory");
-const appolo_event_dispatcher_1 = require("appolo-event-dispatcher");
+const events_1 = require("@appolo/events");
 class BaseCrudManager {
     constructor() {
-        this._itemCreatedEvent = new appolo_event_dispatcher_1.Event({ await: true });
-        this._itemCreatedOrUpdatedEvent = new appolo_event_dispatcher_1.Event({ await: true });
-        this._itemUpdatedEvent = new appolo_event_dispatcher_1.Event({ await: true });
+        this._itemCreatedEvent = new events_1.Event({ await: true });
+        this._itemCreatedOrUpdatedEvent = new events_1.Event({ await: true });
+        this._itemUpdatedEvent = new events_1.Event({ await: true });
     }
     getById(id, params = {}) {
         return this.findOne({ ...params, filter: { _id: id } });
@@ -232,7 +232,7 @@ class BaseCrudManager {
     }
 }
 tslib_1.__decorate([
-    appolo_1.inject(),
+    inject_1.inject(),
     tslib_1.__metadata("design:type", Object)
 ], BaseCrudManager.prototype, "logger", void 0);
 exports.BaseCrudManager = BaseCrudManager;

@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const appolo_1 = require("appolo");
+const core_1 = require("@appolo/core");
 const logger_1 = require("@appolo/logger");
 const mongoModule_1 = require("../module/mongoModule");
 const modelRepository_1 = require("../module/src/modelRepository");
@@ -12,9 +12,9 @@ let should = require('chai').should();
 chai.use(sinonChai);
 describe("mongo module Spec", function () {
     it("should load mongo", async () => {
-        let app = appolo_1.createApp({ root: __dirname, environment: "production", port: 8184 });
-        await app.module(logger_1.LoggerModule);
-        await app.module(new mongoModule_1.MongoModule({ connection: process.env.MONGO }));
+        let app = core_1.createApp({ root: __dirname, environment: "production", port: 8184 });
+        await app.module.load(logger_1.LoggerModule);
+        await app.module.use(mongoModule_1.MongoModule.for({ connection: process.env.MONGO }));
         await app.launch();
         let modelRepository = app.injector.get(modelRepository_1.ModelRepository);
         modelRepository.connection.readyState.should.be.eq(1);

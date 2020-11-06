@@ -1,4 +1,4 @@
-import {IFactory} from 'appolo';
+import {IFactory} from '@appolo/inject';
 import mongoose = require('mongoose');
 import {BaseCrudItem, Schema} from "../..";
 

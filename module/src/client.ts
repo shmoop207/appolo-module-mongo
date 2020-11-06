@@ -1,5 +1,6 @@
 "use strict";
-import {define, factory, IEnv, IFactory, inject, singleton, App} from 'appolo';
+import {define, factory, IFactory, inject, singleton} from '@appolo/inject';
+import {IEnv,App} from '@appolo/core';
 import {ILogger} from "@appolo/logger";
 import {IOptions} from "./interfaces";
 import mongoose = require('mongoose');

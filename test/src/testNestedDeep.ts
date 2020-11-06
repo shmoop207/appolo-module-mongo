@@ -1,4 +1,3 @@
-import {define} from 'appolo'
 import {prop, Schema, schema} from "../../index";
 
 

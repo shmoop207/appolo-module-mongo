@@ -1,6 +1,5 @@
 import {mongoose} from "../..";
 import {ConnectionOptions, Schema, SchemaOptions, SchemaTypeOpts} from "mongoose";
-import {IModuleOptions} from "appolo";
 import {IndexOptions} from "mongodb";
 
 export interface IBaseCrudItem {
@@ -24,7 +23,7 @@ export interface GetAllParams<T> {
 }
 
 
-export interface IOptions extends IModuleOptions {
+export interface IOptions  {
     connection: string,
     connectionId?: string
     useConnectionId?: string

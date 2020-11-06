@@ -2,7 +2,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Client = void 0;
 const tslib_1 = require("tslib");
-const appolo_1 = require("appolo");
+const inject_1 = require("@appolo/inject");
+const core_1 = require("@appolo/core");
 const mongoose = require("mongoose");
 const _ = require("lodash");
 const Q = require("bluebird");
@@ -54,25 +55,25 @@ let Client = class Client {
     }
 };
 tslib_1.__decorate([
-    appolo_1.inject(),
+    inject_1.inject(),
     tslib_1.__metadata("design:type", Object)
 ], Client.prototype, "logger", void 0);
 tslib_1.__decorate([
-    appolo_1.inject(),
+    inject_1.inject(),
     tslib_1.__metadata("design:type", Object)
 ], Client.prototype, "moduleOptions", void 0);
 tslib_1.__decorate([
-    appolo_1.inject(),
+    inject_1.inject(),
     tslib_1.__metadata("design:type", Object)
 ], Client.prototype, "env", void 0);
 tslib_1.__decorate([
-    appolo_1.inject(),
-    tslib_1.__metadata("design:type", appolo_1.App)
+    inject_1.inject(),
+    tslib_1.__metadata("design:type", core_1.App)
 ], Client.prototype, "app", void 0);
 Client = tslib_1.__decorate([
-    appolo_1.define(),
-    appolo_1.singleton(),
-    appolo_1.factory()
+    inject_1.define(),
+    inject_1.singleton(),
+    inject_1.factory()
 ], Client);
 exports.Client = Client;
 //# sourceMappingURL=client.js.map

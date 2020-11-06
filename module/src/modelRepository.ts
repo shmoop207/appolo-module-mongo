@@ -1,12 +1,12 @@
 import mongoose = require('mongoose');
-import {define, inject, injectAlias, singleton} from 'appolo';
+import {define, inject, alias, singleton} from '@appolo/inject';
 import {Model, Schema} from "../..";
 
 @define()
 @singleton()
 export class ModelRepository {
     @inject() private client: mongoose.Connection;
-    @injectAlias("IModels", "modelName") private models: Model<any>[];
+    @alias("IModels", "modelName") private models: Model<any>[];
 
 
     public get connection(): mongoose.Connection {
