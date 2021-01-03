@@ -1,6 +1,6 @@
 {
   "name": "@appolo/mongo",
-  "version": "8.0.0",
+  "version": "8.0.1",
   "description": "appolo mongo module",
   "publishConfig": {
     "access": "public"
@@ -8,14 +8,14 @@
   "keywords": [],
   "main": "index.js",
   "dependencies": {
-    "@appolo/logger": "^8.0.4",
-    "@appolo/core": "^8.0.5",
+    "@appolo/logger": "^8.0.5",
+    "@appolo/engine": "^8.0.21",
     "appolo-mongo": "^8.0.0",
     "lodash": "^4.17.20"
   },
   "devDependencies": {
     "@types/lodash": "^4.14.164",
-    "@types/mongoose": "^5.7.37",
+    "@types/mongoose": "^5.10.3",
     "@types/node": "^14.14.6",
     "@types/mocha": "^8.0.3",
     "@types/chai": "^4.2.14",

@@ -1,6 +1,6 @@
 "use strict";
 import {define, factory, IFactory, inject, singleton} from '@appolo/inject';
-import {IEnv,App} from '@appolo/core';
+import {IEnv,App} from '@appolo/engine';
 import {ILogger} from "@appolo/logger";
 import {IOptions} from "./interfaces";
 import mongoose = require('mongoose');
@@ -31,7 +31,7 @@ export class Client implements IFactory<mongoose.Connection> {
                 }
             }
 
-            mongoose.Promise = Q;
+            //mongoose.Promise = Q;
 
             let connectionString = this.moduleOptions.connection;
 

@@ -3,10 +3,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Client = void 0;
 const tslib_1 = require("tslib");
 const inject_1 = require("@appolo/inject");
-const core_1 = require("@appolo/core");
+const engine_1 = require("@appolo/engine");
 const mongoose = require("mongoose");
 const _ = require("lodash");
-const Q = require("bluebird");
 const ConnectionIdSymbol = Symbol("connectionId");
 let Client = class Client {
     async get() {
@@ -17,7 +16,7 @@ let Client = class Client {
                     return conn;
                 }
             }
-            mongoose.Promise = Q;
+            //mongoose.Promise = Q;
             let connectionString = this.moduleOptions.connection;
             let mongoOptions = {
                 keepAlive: true,
@@ -68,7 +67,7 @@ tslib_1.__decorate([
 ], Client.prototype, "env", void 0);
 tslib_1.__decorate([
     inject_1.inject(),
-    tslib_1.__metadata("design:type", core_1.App)
+    tslib_1.__metadata("design:type", engine_1.App)
 ], Client.prototype, "app", void 0);
 Client = tslib_1.__decorate([
     inject_1.define(),

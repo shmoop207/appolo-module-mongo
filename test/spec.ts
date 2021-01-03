@@ -1,4 +1,4 @@
-import {createApp} from '@appolo/core'
+import {createApp} from '@appolo/engine'
 import {LoggerModule} from '@appolo/logger';
 import {MongoModule} from "../module/mongoModule";
 import {ModelRepository} from "../module/src/modelRepository";
@@ -13,7 +13,7 @@ chai.use(sinonChai);
 describe("mongo module Spec", function () {
     it("should load mongo", async () => {
 
-        let app = createApp({root: __dirname, environment: "production", port: 8184});
+        let app = createApp({root: __dirname, environment: "production"});
 
         await app.module.load(LoggerModule);
 
