@@ -10,6 +10,9 @@ const modelFactory_1 = require("./modelFactory");
 const events_1 = require("@appolo/events");
 class BaseCrudManager {
     constructor() {
+        this._beforeItemCreateEvent = new events_1.Event({ await: true });
+        this._beforeItemUpdateEvent = new events_1.Event({ await: true });
+        this._beforeItemCreateOrUpdateEvent = new events_1.Event({ await: true });
         this._itemCreatedEvent = new events_1.Event({ await: true });
         this._itemCreatedOrUpdatedEvent = new events_1.Event({ await: true });
         this._itemUpdatedEvent = new events_1.Event({ await: true });
@@ -108,6 +111,10 @@ class BaseCrudManager {
                     isDeleted: false
                 };
             }
+            await Promise.all([
+                this._beforeItemCreateEvent.fireEvent({ data }),
+                this._beforeItemCreateOrUpdateEvent.fireEvent({ data })
+            ]);
             let model = new this.model(data);
             let item = await model.save();
             await Promise.all([
@@ -129,6 +136,10 @@ class BaseCrudManager {
             }
             options = { new: true, ...options };
             await this.beforeUpdateById(id, data, previous);
+            await Promise.all([
+                this._beforeItemUpdateEvent.fireEvent({ id, previous, data }),
+                this._beforeItemCreateOrUpdateEvent.fireEvent({ id, previous, data })
+            ]);
             let item = await this.model.findByIdAndUpdate(id, data, options)
                 .exec();
             await Promise.all([
@@ -229,6 +240,15 @@ class BaseCrudManager {
     }
     get itemUpdatedEvent() {
         return this._itemUpdatedEvent;
+    }
+    get beforeItemCreatedEvent() {
+        return this._beforeItemCreateEvent;
+    }
+    get beforeItemUpdatedEvent() {
+        return this._beforeItemUpdateEvent;
+    }
+    get beforeItemCreatedOrUpdatedEvent() {
+        return this._beforeItemCreateOrUpdateEvent;
     }
 }
 tslib_1.__decorate([

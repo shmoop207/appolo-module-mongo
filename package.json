@@ -9,7 +9,7 @@
   "main": "index.js",
   "dependencies": {
     "@appolo/logger": "^8.0.5",
-    "@appolo/engine": "^8.0.21",
+    "@appolo/engine": "^8.0.22",
     "appolo-mongo": "^8.0.0",
     "lodash": "^4.17.20"
   },

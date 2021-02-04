@@ -23,7 +23,7 @@ export class MongoModule extends Module<IOptions> {
 
 
         let modules = this.parent.discovery.findAllReflectData<string>(ModelKey);
-        _.forEach(modules, item => {
+        (modules||[]).forEach( item => {
 
             this.app.injector.register(item.metaData, ModelFactory)
                 .inject("connection", "client")

@@ -16,6 +16,10 @@ export abstract class BaseCrudManager<K extends Schema> {
 
     @inject() protected logger: ILogger;
 
+    protected readonly _beforeItemCreateEvent = new Event<{ data: Partial<K> }>({await: true});
+    protected readonly _beforeItemUpdateEvent = new Event<{ id: string, data: Partial<K>, previous: Doc<K> }>({await: true});
+    protected readonly _beforeItemCreateOrUpdateEvent = new Event<{ id?: string, data: Partial<K>, previous?: Doc<K> }>({await: true});
+
     protected readonly _itemCreatedEvent = new Event<{ item: Doc<K> }>({await: true});
     protected readonly _itemCreatedOrUpdatedEvent = new Event<{ item: Doc<K>, previous?: Doc<K> }>({await: true});
     protected readonly _itemUpdatedEvent = new Event<{ item: Doc<K>, previous: Doc<K> }>({await: true});
@@ -113,7 +117,7 @@ export abstract class BaseCrudManager<K extends Schema> {
 
         try {
 
-            let query: Query<Doc<K>[]> = this.model
+            let query: Query<Doc<K>[], any, any> = this.model
                 .find(options.filter as object || {})
                 .sort(options.sort || {})
                 .lean(options.lean);
@@ -155,6 +159,11 @@ export abstract class BaseCrudManager<K extends Schema> {
                 } as K & BaseCrudItem;
             }
 
+            await Promise.all([
+                this._beforeItemCreateEvent.fireEvent({data}),
+                this._beforeItemCreateOrUpdateEvent.fireEvent({data})
+            ]);
+
             let model = new this.model(data as any);
 
             let item = await model.save();
@@ -187,6 +196,11 @@ export abstract class BaseCrudManager<K extends Schema> {
             options = {new: true, ...options};
 
             await this.beforeUpdateById(id, data, previous);
+
+            await Promise.all([
+                this._beforeItemUpdateEvent.fireEvent({id, previous, data}),
+                this._beforeItemCreateOrUpdateEvent.fireEvent({id, previous, data})
+            ]);
 
             let item = await this.model.findByIdAndUpdate(id, data as K & BaseCrudItem, options)
                 .exec();
@@ -325,6 +339,18 @@ export abstract class BaseCrudManager<K extends Schema> {
 
     public get itemUpdatedEvent(): IEvent<{ item: Doc<K>, previous?: Doc<K> }> {
         return this._itemUpdatedEvent;
+    }
+
+    public get beforeItemCreatedEvent(): IEvent<{ data: Partial<K> }> {
+        return this._beforeItemCreateEvent;
+    }
+
+    public get beforeItemUpdatedEvent(): IEvent<{ id: string, data: Partial<K>, previous: Doc<K> }> {
+        return this._beforeItemUpdateEvent;
+    }
+
+    public get beforeItemCreatedOrUpdatedEvent(): IEvent<{ id?: string, data: Partial<K>, previous?: Doc<K> }> {
+        return this._beforeItemCreateOrUpdateEvent;
     }
 
 

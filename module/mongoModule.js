@@ -20,7 +20,7 @@ let MongoModule = MongoModule_1 = class MongoModule extends engine_1.Module {
     }
     beforeModuleLaunch() {
         let modules = this.parent.discovery.findAllReflectData(decorator_1.ModelKey);
-        _.forEach(modules, item => {
+        (modules || []).forEach(item => {
             this.app.injector.register(item.metaData, modelFactory_1.ModelFactory)
                 .inject("connection", "client")
                 .singleton()
