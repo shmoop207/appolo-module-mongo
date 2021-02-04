@@ -4,8 +4,7 @@ import {InjectModelKey, ModelKey} from "./src/decorator";
 import {ModelFactory} from "./src/modelFactory";
 import {IOptions} from "./src/interfaces";
 import {Schema} from "../index";
-import {Reflector} from "@appolo/utils";
-import _ = require('lodash');
+import {Reflector,Arrays} from "@appolo/utils";
 
 @module()
 export class MongoModule extends Module<IOptions> {
@@ -35,10 +34,10 @@ export class MongoModule extends Module<IOptions> {
 
         let injectModules = this.parent.discovery.findAllReflectData<{ propertyKey: string, model: Schema }[]>(InjectModelKey);
 
-        _.forEach(injectModules, item => {
+        Arrays.forEach(injectModules, item => {
             let define =  this.parent.injector.getDefinition(item.fn);
 
-            _.forEach(item.metaData, metaData => {
+            Arrays.forEach(item.metaData, metaData => {
                 let modelName = this.parent.discovery.getReflectMetadata<string>(ModelKey, metaData.model);
 
 

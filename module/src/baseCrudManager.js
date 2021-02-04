@@ -3,11 +3,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.BaseCrudManager = void 0;
 const tslib_1 = require("tslib");
 const Q = require("bluebird");
-const _ = require("lodash");
 const __1 = require("../..");
 const inject_1 = require("@appolo/inject");
 const modelFactory_1 = require("./modelFactory");
 const events_1 = require("@appolo/events");
+const utils_1 = require("@appolo/utils");
 class BaseCrudManager {
     constructor() {
         this._beforeItemCreateEvent = new events_1.Event({ await: true });
@@ -107,7 +107,7 @@ class BaseCrudManager {
                     ...data,
                     created: Date.now(),
                     updated: Date.now(),
-                    isActive: _.isBoolean(isActive) ? isActive : true,
+                    isActive: utils_1.Objects.isBoolean(isActive) ? isActive : true,
                     isDeleted: false
                 };
             }
@@ -165,7 +165,7 @@ class BaseCrudManager {
             await this.beforeUpdateById(id, data, item);
             let previous = this.cloneDocument(item);
             previous.isNew = false;
-            _.extend(item, data);
+            Object.assign(item, data);
             await item.save();
             await Promise.all([
                 this._itemUpdatedEvent.fireEvent({ item, previous }),
@@ -208,7 +208,7 @@ class BaseCrudManager {
     }
     async deleteAll(query, hard) {
         try {
-            if (!_.isPlainObject(query)) {
+            if (!utils_1.Objects.isPlain(query)) {
                 return this.deleteById(query, hard);
             }
             if (this.model[modelFactory_1.BaseCrudSymbol] && !hard) {

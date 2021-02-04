@@ -7,7 +7,7 @@ const engine_1 = require("@appolo/engine");
 const modelRepository_1 = require("./src/modelRepository");
 const decorator_1 = require("./src/decorator");
 const modelFactory_1 = require("./src/modelFactory");
-const _ = require("lodash");
+const utils_1 = require("@appolo/utils");
 let MongoModule = MongoModule_1 = class MongoModule extends engine_1.Module {
     constructor() {
         super(...arguments);
@@ -29,9 +29,9 @@ let MongoModule = MongoModule_1 = class MongoModule extends engine_1.Module {
                 .factory();
         });
         let injectModules = this.parent.discovery.findAllReflectData(decorator_1.InjectModelKey);
-        _.forEach(injectModules, item => {
+        utils_1.Arrays.forEach(injectModules, item => {
             let define = this.parent.injector.getDefinition(item.fn);
-            _.forEach(item.metaData, metaData => {
+            utils_1.Arrays.forEach(item.metaData, metaData => {
                 let modelName = this.parent.discovery.getReflectMetadata(decorator_1.ModelKey, metaData.model);
                 define.inject.push({ name: metaData.propertyKey, ref: modelName, injector: this.app.injector });
             });

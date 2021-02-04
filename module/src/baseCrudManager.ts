@@ -1,6 +1,5 @@
 "use strict";
 import Q = require('bluebird');
-import _ = require('lodash');
 import {BaseCrudItem, mongoose, Schema} from "../..";
 import {Doc, Model} from "appolo-mongo";
 import {inject} from "@appolo/inject";
@@ -9,6 +8,7 @@ import {IBaseCrudItem, CrudItemParams, GetAllParams} from "./interfaces";
 import {BaseCrudSymbol} from "./modelFactory";
 import {ModelUpdateOptions, Query, QueryFindOneAndUpdateOptions} from "mongoose";
 import {Event, IEvent} from "@appolo/events";
+import {Objects} from "@appolo/utils";
 
 
 export abstract class BaseCrudManager<K extends Schema> {
@@ -77,7 +77,8 @@ export abstract class BaseCrudManager<K extends Schema> {
                 query.where('isDeleted', false)
             }
 
-            let p1 = query.where(params.filter || {})
+
+            let p1 = query.where(params.filter || {} as any)
                 .sort(params.sort || {})
                 .populate(params.populate || [])
                 .limit(params.pageSize || 0)
@@ -97,7 +98,7 @@ export abstract class BaseCrudManager<K extends Schema> {
                     query2.where('isDeleted', false)
                 }
 
-                promises.count = query2.where(params.filter || {})
+                promises.count = query2.where(params.filter || {} as any)
                     .countDocuments()
                     .exec();
             }
@@ -117,7 +118,7 @@ export abstract class BaseCrudManager<K extends Schema> {
 
         try {
 
-            let query: Query<Doc<K>[], any, any> = this.model
+            let query: Query<Doc<K>[], any> = this.model
                 .find(options.filter as object || {})
                 .sort(options.sort || {})
                 .lean(options.lean);
@@ -154,7 +155,7 @@ export abstract class BaseCrudManager<K extends Schema> {
                     ...data,
                     created: Date.now(),
                     updated: Date.now(),
-                    isActive: _.isBoolean(isActive) ? isActive : true,
+                    isActive: Objects.isBoolean(isActive) ? isActive : true,
                     isDeleted: false
                 } as K & BaseCrudItem;
             }
@@ -240,7 +241,7 @@ export abstract class BaseCrudManager<K extends Schema> {
 
             previous.isNew = false;
 
-            _.extend(item, data);
+            Object.assign(item, data);
 
             await item.save();
 
@@ -300,7 +301,7 @@ export abstract class BaseCrudManager<K extends Schema> {
     public async deleteAll(query: CrudItemParams<K> | string | mongoose.Schema.Types.ObjectId, hard ?: boolean): Promise<void> {
         try {
 
-            if (!_.isPlainObject(query)) {
+            if (!Objects.isPlain(query)) {
                 return this.deleteById(query as string, hard)
             }
 

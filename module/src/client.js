@@ -5,13 +5,12 @@ const tslib_1 = require("tslib");
 const inject_1 = require("@appolo/inject");
 const engine_1 = require("@appolo/engine");
 const mongoose = require("mongoose");
-const _ = require("lodash");
 const ConnectionIdSymbol = Symbol("connectionId");
 let Client = class Client {
     async get() {
         try {
             if (this.moduleOptions.useConnectionId) {
-                let conn = _.find(mongoose.connections, conn => conn[ConnectionIdSymbol] == this.moduleOptions.useConnectionId);
+                let conn = (mongoose.connections || []).find(conn => conn[ConnectionIdSymbol] == this.moduleOptions.useConnectionId);
                 if (conn) {
                     return conn;
                 }
@@ -29,7 +28,7 @@ let Client = class Client {
                 useUnifiedTopology: true
             };
             if (this.moduleOptions.config) {
-                _.merge(mongoOptions, this.moduleOptions.config);
+                Object.assign(mongoOptions, this.moduleOptions.config);
             }
             mongoose.connection.on('disconnected', () => {
                 this.logger.error('disconnected from mongodb', { url: connectionString });

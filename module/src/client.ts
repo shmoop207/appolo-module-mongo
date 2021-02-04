@@ -1,11 +1,10 @@
 "use strict";
 import {define, factory, IFactory, inject, singleton} from '@appolo/inject';
-import {IEnv,App} from '@appolo/engine';
+import {IEnv, App} from '@appolo/engine';
 import {ILogger} from "@appolo/logger";
 import {IOptions} from "./interfaces";
+import {Arrays} from "@appolo/utils";
 import mongoose = require('mongoose');
-import _ = require("lodash");
-import Q = require('bluebird');
 
 const ConnectionIdSymbol = Symbol("connectionId");
 
@@ -24,9 +23,9 @@ export class Client implements IFactory<mongoose.Connection> {
         try {
 
             if (this.moduleOptions.useConnectionId) {
-                let conn = _.find(mongoose.connections, conn => conn[ConnectionIdSymbol] == this.moduleOptions.useConnectionId);
+                let conn = (mongoose.connections || []).find(conn => conn[ConnectionIdSymbol] == this.moduleOptions.useConnectionId);
 
-                if(conn){
+                if (conn) {
                     return conn
                 }
             }
@@ -41,13 +40,13 @@ export class Client implements IFactory<mongoose.Connection> {
                 useNewUrlParser: true,
                 useCreateIndex: true,
                 //autoReconnect: true,
-               // reconnectTries: Number.MAX_VALUE,
-               // reconnectInterval: 500,
-                useUnifiedTopology:true
+                // reconnectTries: Number.MAX_VALUE,
+                // reconnectInterval: 500,
+                useUnifiedTopology: true
             };
 
             if (this.moduleOptions.config) {
-                _.merge(mongoOptions, this.moduleOptions.config);
+                Object.assign(mongoOptions, this.moduleOptions.config);
             }
 
             mongoose.connection.on('disconnected', () => {
