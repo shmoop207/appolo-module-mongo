@@ -237,6 +237,11 @@ export abstract class BaseCrudManager<K extends Schema> {
 
             await this.beforeUpdateById(id, data, item);
 
+            await Promise.all([
+                this._beforeItemUpdateEvent.fireEvent({id, previous:item, data}),
+                this._beforeItemCreateOrUpdateEvent.fireEvent({id, previous:item, data})
+            ]);
+
             let previous = this.cloneDocument(item);
 
             previous.isNew = false;
