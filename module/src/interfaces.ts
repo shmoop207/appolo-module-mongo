@@ -10,7 +10,7 @@ export interface IBaseCrudItem {
     created?: number
 }
 
-export type CrudItemParams<T> = { [J in keyof Partial<T>]: any };
+export type CrudItemParams<T> = { [J in keyof Partial<T> | string]: any };
 
 export interface GetAllParams<T> {
     page?: number,
@@ -23,7 +23,7 @@ export interface GetAllParams<T> {
 }
 
 
-export interface IOptions  {
+export interface IOptions {
     connection: string,
     connectionId?: string
     useConnectionId?: string

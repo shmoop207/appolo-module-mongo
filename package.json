@@ -1,6 +1,6 @@
 {
   "name": "@appolo/mongo",
-  "version": "8.0.3",
+  "version": "8.0.4",
   "description": "appolo mongo module",
   "publishConfig": {
     "access": "public"
