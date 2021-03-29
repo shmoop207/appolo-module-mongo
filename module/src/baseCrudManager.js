@@ -196,12 +196,13 @@ class BaseCrudManager {
             throw e;
         }
     }
-    async deleteById(id, hard) {
+    async deleteById(id, hard = false) {
         try {
-            if (this.model[modelFactory_1.BaseCrudSymbol] && !hard) {
+            let isBaseCrud = this.model[modelFactory_1.BaseCrudSymbol];
+            if (isBaseCrud) {
                 await this.updateById(id, { isDeleted: true, isActive: false });
             }
-            else {
+            if (hard || !isBaseCrud) {
                 await this.model.findByIdAndDelete(id).exec();
             }
         }

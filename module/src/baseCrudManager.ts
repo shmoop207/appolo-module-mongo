@@ -238,8 +238,8 @@ export abstract class BaseCrudManager<K extends Schema> {
             await this.beforeUpdateById(id, data, item);
 
             await Promise.all([
-                this._beforeItemUpdateEvent.fireEvent({id, previous:item, data}),
-                this._beforeItemCreateOrUpdateEvent.fireEvent({id, previous:item, data})
+                this._beforeItemUpdateEvent.fireEvent({id, previous: item, data}),
+                this._beforeItemCreateOrUpdateEvent.fireEvent({id, previous: item, data})
             ]);
 
             let previous = this.cloneDocument(item);
@@ -285,17 +285,20 @@ export abstract class BaseCrudManager<K extends Schema> {
         }
     }
 
-    public async deleteById(id: string, hard ?: boolean): Promise<void> {
+    public async deleteById(id: string, hard: boolean = false): Promise<void> {
         try {
 
-            if (this.model[BaseCrudSymbol] && !hard) {
+            let isBaseCrud = this.model[BaseCrudSymbol];
+
+            if (isBaseCrud) {
 
                 await this.updateById(id, {isDeleted: true, isActive: false} as K & BaseCrudItem);
+            }
 
-            } else {
-
+            if (hard || !isBaseCrud) {
                 await this.model.findByIdAndDelete(id).exec()
             }
+
         } catch (e) {
             this.logger.error(`${this.constructor.name} failed to deleteById`, {e, id});
             throw e
