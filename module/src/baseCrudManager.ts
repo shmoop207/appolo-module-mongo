@@ -6,7 +6,7 @@ import {inject} from "@appolo/inject";
 import {ILogger} from "@appolo/logger";
 import {IBaseCrudItem, CrudItemParams, GetAllParams} from "./interfaces";
 import {BaseCrudSymbol} from "./modelFactory";
-import {ModelUpdateOptions, Query, QueryFindOneAndUpdateOptions} from "mongoose";
+import {ModelUpdateOptions, Query,QueryOptions} from "mongoose";
 import {Event, IEvent} from "@appolo/events";
 import {Objects} from "@appolo/utils";
 
@@ -57,7 +57,7 @@ export abstract class BaseCrudManager<K extends Schema> {
 
             let item = await query.exec();
 
-            return item;
+            return item as Doc<K>;
 
         } catch
             (e) {
@@ -184,7 +184,7 @@ export abstract class BaseCrudManager<K extends Schema> {
 
     }
 
-    public async updateById(id: string, data: Partial<K>, options: QueryFindOneAndUpdateOptions = {}): Promise<Doc<K>> {
+    public async updateById(id: string, data: Partial<K>, options: QueryOptions = {}): Promise<Doc<K>> {
 
         try {
 
@@ -207,8 +207,8 @@ export abstract class BaseCrudManager<K extends Schema> {
                 .exec();
 
             await Promise.all([
-                this._itemUpdatedEvent.fireEvent({item, previous}),
-                this._itemCreatedOrUpdatedEvent.fireEvent({item: item, previous})
+                this._itemUpdatedEvent.fireEvent({item:item as Doc<K>, previous}),
+                this._itemCreatedOrUpdatedEvent.fireEvent({item: item as Doc<K>, previous})
             ]);
 
             return item;

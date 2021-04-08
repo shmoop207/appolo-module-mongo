@@ -1,6 +1,4 @@
-import {mongoose} from "../..";
-import {ConnectionOptions, Schema, SchemaOptions, SchemaTypeOpts} from "mongoose";
-import {IndexOptions} from "mongodb";
+import {ConnectionOptions, Schema, SchemaOptions, SchemaTypeOpts,PopulateOptions} from "mongoose";
 
 export interface IBaseCrudItem {
     _id?: string,
@@ -19,7 +17,7 @@ export interface GetAllParams<T> {
     filter?: string | CrudItemParams<T>,
     fields?: string | CrudItemParams<T>,
     lean?: boolean
-    populate?: string | mongoose.ModelPopulateOptions | mongoose.ModelPopulateOptions[];
+    populate?: string | PopulateOptions | PopulateOptions[];
 }
 
 

@@ -143,7 +143,7 @@ class BaseCrudManager {
             let item = await this.model.findByIdAndUpdate(id, data, options)
                 .exec();
             await Promise.all([
-                this._itemUpdatedEvent.fireEvent({ item, previous }),
+                this._itemUpdatedEvent.fireEvent({ item: item, previous }),
                 this._itemCreatedOrUpdatedEvent.fireEvent({ item: item, previous })
             ]);
             return item;
