@@ -161,8 +161,8 @@ export abstract class BaseCrudManager<K extends Schema> {
             }
 
             await Promise.all([
-                this._beforeItemCreateEvent.fireEvent({data}),
-                this._beforeItemCreateOrUpdateEvent.fireEvent({data})
+                this._beforeItemCreateEvent.fireEventAsync({data}),
+                this._beforeItemCreateOrUpdateEvent.fireEventAsync({data})
             ]);
 
             let model = new this.model(data as any);
@@ -170,8 +170,8 @@ export abstract class BaseCrudManager<K extends Schema> {
             let item = await model.save();
 
             await Promise.all([
-                this._itemCreatedEvent.fireEvent({item}),
-                this._itemCreatedOrUpdatedEvent.fireEvent({item})
+                this._itemCreatedEvent.fireEventAsync({item}),
+                this._itemCreatedOrUpdatedEvent.fireEventAsync({item})
             ]);
 
             return item;
@@ -199,16 +199,16 @@ export abstract class BaseCrudManager<K extends Schema> {
             await this.beforeUpdateById(id, data, previous);
 
             await Promise.all([
-                this._beforeItemUpdateEvent.fireEvent({id, previous, data}),
-                this._beforeItemCreateOrUpdateEvent.fireEvent({id, previous, data})
+                this._beforeItemUpdateEvent.fireEventAsync({id, previous, data}),
+                this._beforeItemCreateOrUpdateEvent.fireEventAsync({id, previous, data})
             ]);
 
             let item = await this.model.findByIdAndUpdate(id, data as K & BaseCrudItem, options)
                 .exec();
 
             await Promise.all([
-                this._itemUpdatedEvent.fireEvent({item:item as Doc<K>, previous}),
-                this._itemCreatedOrUpdatedEvent.fireEvent({item: item as Doc<K>, previous})
+                this._itemUpdatedEvent.fireEventAsync({item:item as Doc<K>, previous}),
+                this._itemCreatedOrUpdatedEvent.fireEventAsync({item: item as Doc<K>, previous})
             ]);
 
             return item;
@@ -238,8 +238,8 @@ export abstract class BaseCrudManager<K extends Schema> {
             await this.beforeUpdateById(id, data, item);
 
             await Promise.all([
-                this._beforeItemUpdateEvent.fireEvent({id, previous: item, data}),
-                this._beforeItemCreateOrUpdateEvent.fireEvent({id, previous: item, data})
+                this._beforeItemUpdateEvent.fireEventAsync({id, previous: item, data}),
+                this._beforeItemCreateOrUpdateEvent.fireEventAsync({id, previous: item, data})
             ]);
 
             let previous = this.cloneDocument(item);
@@ -251,8 +251,8 @@ export abstract class BaseCrudManager<K extends Schema> {
             await item.save();
 
             await Promise.all([
-                this._itemUpdatedEvent.fireEvent({item, previous}),
-                this._itemCreatedOrUpdatedEvent.fireEvent({item: item, previous})
+                this._itemUpdatedEvent.fireEventAsync({item, previous}),
+                this._itemCreatedOrUpdatedEvent.fireEventAsync({item: item, previous})
             ]);
 
             return item;
