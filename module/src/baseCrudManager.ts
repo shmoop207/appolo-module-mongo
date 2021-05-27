@@ -83,7 +83,7 @@ export abstract class BaseCrudManager<K extends Schema> {
                 .populate(params.populate || [])
                 .limit(params.pageSize || 0)
                 .lean(params.lean)
-                .skip((params.pageSize || 0) * ((params.page || 0) - 1))
+                .skip((params.pageSize || 0) * ((params.page || 1) - 1))
                 .exec();
 
             let promises = {
