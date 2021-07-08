@@ -131,7 +131,8 @@ class BaseCrudManager {
     async updateById(id, data, options = {}) {
         try {
             let previous = await this.getById(id);
-            if (this.model[modelFactory_1.BaseCrudSymbol]) {
+            let isBaseCrud = this.model[modelFactory_1.BaseCrudSymbol];
+            if (isBaseCrud) {
                 data = { ...data, updated: Date.now() };
             }
             options = { new: true, ...options };
@@ -142,7 +143,7 @@ class BaseCrudManager {
             ]);
             let item = await this.model.findByIdAndUpdate(id, data, options)
                 .exec();
-            if (item) {
+            if (item && (!isBaseCrud || !(item.isDeleted))) {
                 await Promise.all([
                     this._itemUpdatedEvent.fireEventAsync({ item: item, previous }),
                     this._itemCreatedOrUpdatedEvent.fireEventAsync({ item: item, previous })

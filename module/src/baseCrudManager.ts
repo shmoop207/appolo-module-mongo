@@ -6,7 +6,7 @@ import {inject} from "@appolo/inject";
 import {ILogger} from "@appolo/logger";
 import {IBaseCrudItem, CrudItemParams, GetAllParams} from "./interfaces";
 import {BaseCrudSymbol} from "./modelFactory";
-import {ModelUpdateOptions, Query,QueryOptions} from "mongoose";
+import {ModelUpdateOptions, Query, QueryOptions} from "mongoose";
 import {Event, IEvent} from "@appolo/events";
 import {Objects} from "@appolo/utils";
 
@@ -190,7 +190,9 @@ export abstract class BaseCrudManager<K extends Schema> {
 
             let previous = await this.getById(id);
 
-            if (this.model[BaseCrudSymbol]) {
+            let isBaseCrud = this.model[BaseCrudSymbol];
+
+            if (isBaseCrud) {
                 data = {...data, updated: Date.now()} as K & BaseCrudItem;
             }
 
@@ -206,9 +208,9 @@ export abstract class BaseCrudManager<K extends Schema> {
             let item = await this.model.findByIdAndUpdate(id, data as K & BaseCrudItem, options)
                 .exec();
 
-            if(item){
+            if (item && (!isBaseCrud || !((item as Doc<IBaseCrudItem>).isDeleted))) {
                 await Promise.all([
-                    this._itemUpdatedEvent.fireEventAsync({item:item as Doc<K>, previous}),
+                    this._itemUpdatedEvent.fireEventAsync({item: item as Doc<K>, previous}),
                     this._itemCreatedOrUpdatedEvent.fireEventAsync({item: item as Doc<K>, previous})
                 ]);
             }
