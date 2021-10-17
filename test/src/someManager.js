@@ -9,13 +9,13 @@ let SomeManager = class SomeManager extends index_1.BaseCrudManager {
     test() {
     }
 };
-tslib_1.__decorate([
-    index_1.model(testModel_1.Test),
-    tslib_1.__metadata("design:type", Object)
+(0, tslib_1.__decorate)([
+    (0, index_1.model)(testModel_1.Test),
+    (0, tslib_1.__metadata)("design:type", Object)
 ], SomeManager.prototype, "model", void 0);
-SomeManager = tslib_1.__decorate([
-    inject_1.define(),
-    inject_1.singleton()
+SomeManager = (0, tslib_1.__decorate)([
+    (0, inject_1.define)(),
+    (0, inject_1.singleton)()
 ], SomeManager);
 exports.SomeManager = SomeManager;
 //# sourceMappingURL=someManager.js.map

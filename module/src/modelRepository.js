@@ -13,17 +13,17 @@ let ModelRepository = class ModelRepository {
         return this.models[modelName];
     }
 };
-tslib_1.__decorate([
-    inject_1.inject(),
-    tslib_1.__metadata("design:type", mongoose.Connection)
+(0, tslib_1.__decorate)([
+    (0, inject_1.inject)(),
+    (0, tslib_1.__metadata)("design:type", mongoose.Connection)
 ], ModelRepository.prototype, "client", void 0);
-tslib_1.__decorate([
-    inject_1.alias("IModels", "modelName"),
-    tslib_1.__metadata("design:type", Array)
+(0, tslib_1.__decorate)([
+    (0, inject_1.alias)("IModels", "modelName"),
+    (0, tslib_1.__metadata)("design:type", Array)
 ], ModelRepository.prototype, "models", void 0);
-ModelRepository = tslib_1.__decorate([
-    inject_1.define(),
-    inject_1.singleton()
+ModelRepository = (0, tslib_1.__decorate)([
+    (0, inject_1.define)(),
+    (0, inject_1.singleton)()
 ], ModelRepository);
 exports.ModelRepository = ModelRepository;
 //# sourceMappingURL=modelRepository.js.map

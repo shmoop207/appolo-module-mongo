@@ -259,9 +259,9 @@ class BaseCrudManager {
         return this._beforeItemCreateOrUpdateEvent;
     }
 }
-tslib_1.__decorate([
-    inject_1.inject(),
-    tslib_1.__metadata("design:type", Object)
+(0, tslib_1.__decorate)([
+    (0, inject_1.inject)(),
+    (0, tslib_1.__metadata)("design:type", Object)
 ], BaseCrudManager.prototype, "logger", void 0);
 exports.BaseCrudManager = BaseCrudManager;
 //# sourceMappingURL=baseCrudManager.js.map

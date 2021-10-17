@@ -12,7 +12,7 @@ let should = require('chai').should();
 chai.use(sinonChai);
 describe("mongo module Spec", function () {
     it("should load mongo", async () => {
-        let app = engine_1.createApp({ root: __dirname, environment: "production" });
+        let app = (0, engine_1.createApp)({ root: __dirname, environment: "production" });
         await app.module.load(logger_1.LoggerModule);
         await app.module.use(mongoModule_1.MongoModule.for({ connection: process.env.MONGO }));
         await app.launch();
@@ -27,9 +27,10 @@ describe("mongo module Spec", function () {
         doc.setName2.should.be.ok;
         doc.name = "aa";
         doc.setName = "aa";
-        doc.nested = { deep: "ccccc" };
+        doc.nested = { deep: "ccccc", name: "11", name2: "" };
         doc.name.should.be.eq("aaaa");
         doc.nested.deep.should.be.eq("ccccc");
+        this;
         let model = modelRepository.getModel(testModel_1.Test);
         model.modelName.should.be.eq("Test");
         await app.reset();

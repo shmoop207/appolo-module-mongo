@@ -7,6 +7,9 @@ export class TestNested extends TestNestedDeep {
 
 
     @prop({type: String})
-    name?: string;
+    name: string;
+
+    @prop({type: String})
+    name2: string;
 
 }

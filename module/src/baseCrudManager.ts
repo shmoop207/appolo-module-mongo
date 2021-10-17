@@ -8,7 +8,7 @@ import {IBaseCrudItem, CrudItemParams, GetAllParams} from "./interfaces";
 import {BaseCrudSymbol} from "./modelFactory";
 import {ModelUpdateOptions, Query, QueryOptions} from "mongoose";
 import {Event, IEvent} from "@appolo/events";
-import {Objects} from "@appolo/utils";
+import {Objects,RecursivePartial} from "@appolo/utils";
 
 
 export abstract class BaseCrudManager<K extends Schema> {
@@ -16,9 +16,9 @@ export abstract class BaseCrudManager<K extends Schema> {
 
     @inject() protected logger: ILogger;
 
-    protected readonly _beforeItemCreateEvent = new Event<{ data: Partial<K> }>({await: true});
-    protected readonly _beforeItemUpdateEvent = new Event<{ id: string, data: Partial<K>, previous: Doc<K> }>({await: true});
-    protected readonly _beforeItemCreateOrUpdateEvent = new Event<{ id?: string, data: Partial<K>, previous?: Doc<K> }>({await: true});
+    protected readonly _beforeItemCreateEvent = new Event<{ data: RecursivePartial<K> }>({await: true});
+    protected readonly _beforeItemUpdateEvent = new Event<{ id: string, data: RecursivePartial<K>, previous: Doc<K> }>({await: true});
+    protected readonly _beforeItemCreateOrUpdateEvent = new Event<{ id?: string, data: RecursivePartial<K>, previous?: Doc<K> }>({await: true});
 
     protected readonly _itemCreatedEvent = new Event<{ item: Doc<K> }>({await: true});
     protected readonly _itemCreatedOrUpdatedEvent = new Event<{ item: Doc<K>, previous?: Doc<K> }>({await: true});
@@ -143,7 +143,7 @@ export abstract class BaseCrudManager<K extends Schema> {
         }
     }
 
-    public async create(data: Partial<K>): Promise<Doc<K>> {
+    public async create(data: RecursivePartial<K>): Promise<Doc<K>> {
 
         try {
 
@@ -165,7 +165,7 @@ export abstract class BaseCrudManager<K extends Schema> {
                 this._beforeItemCreateOrUpdateEvent.fireEventAsync({data})
             ]);
 
-            let model = new this.model(data as any);
+            let model:Doc<K> = new this.model(data as any);
 
             let item = await model.save();
 
@@ -184,7 +184,7 @@ export abstract class BaseCrudManager<K extends Schema> {
 
     }
 
-    public async updateById(id: string, data: Partial<K>, options: QueryOptions = {}): Promise<Doc<K>> {
+    public async updateById(id: string, data: RecursivePartial<K>, options: QueryOptions = {}): Promise<Doc<K>> {
 
         try {
 
@@ -226,7 +226,7 @@ export abstract class BaseCrudManager<K extends Schema> {
         }
     }
 
-    public async updateByIdAndSave(id: string, data: Partial<K>): Promise<Doc<K>> {
+    public async updateByIdAndSave(id: string, data: RecursivePartial<K>): Promise<Doc<K>> {
 
         try {
 
@@ -270,7 +270,7 @@ export abstract class BaseCrudManager<K extends Schema> {
         }
     }
 
-    protected beforeUpdateById(id: string, data: Partial<K>, previous: Doc<K>) {
+    protected beforeUpdateById(id: string, data: RecursivePartial<K>, previous: Doc<K>) {
 
     }
 
@@ -332,7 +332,7 @@ export abstract class BaseCrudManager<K extends Schema> {
     }
 
     public cloneDocument(doc: Doc<K>): Doc<K> {
-        let newDoc = new this.model(doc.toObject());
+        let newDoc = new this.model(doc.toObject() as K);
         return newDoc;
     }
 
@@ -355,15 +355,15 @@ export abstract class BaseCrudManager<K extends Schema> {
         return this._itemUpdatedEvent;
     }
 
-    public get beforeItemCreatedEvent(): IEvent<{ data: Partial<K> }> {
+    public get beforeItemCreatedEvent(): IEvent<{ data: RecursivePartial<K> }> {
         return this._beforeItemCreateEvent;
     }
 
-    public get beforeItemUpdatedEvent(): IEvent<{ id: string, data: Partial<K>, previous: Doc<K> }> {
+    public get beforeItemUpdatedEvent(): IEvent<{ id: string, data: RecursivePartial<K>, previous: Doc<K> }> {
         return this._beforeItemUpdateEvent;
     }
 
-    public get beforeItemCreatedOrUpdatedEvent(): IEvent<{ id?: string, data: Partial<K>, previous?: Doc<K> }> {
+    public get beforeItemCreatedOrUpdatedEvent(): IEvent<{ id?: string, data: RecursivePartial<K>, previous?: Doc<K> }> {
         return this._beforeItemCreateOrUpdateEvent;
     }
 

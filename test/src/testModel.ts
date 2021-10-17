@@ -12,7 +12,7 @@ import {
     schema,
     Schema,
     staticMethod,
-    virtual
+    virtual,propArray
 } from "../../index";
 
 @model()
@@ -28,7 +28,7 @@ export class Test extends BaseCrudItem {
     @prop(TestNested)
     nested: TestNested;
 
-    @prop(TestNested)
+    @propArray(TestNested)
     nestedArr: TestNested[];
 
     @prop({ref: TesRef})

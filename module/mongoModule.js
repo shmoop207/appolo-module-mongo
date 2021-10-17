@@ -41,8 +41,8 @@ let MongoModule = MongoModule_1 = class MongoModule extends engine_1.Module {
         return [{ id: this.moduleOptions.id, type: modelRepository_1.ModelRepository }];
     }
 };
-MongoModule = MongoModule_1 = tslib_1.__decorate([
-    engine_1.module()
+MongoModule = MongoModule_1 = (0, tslib_1.__decorate)([
+    (0, engine_1.module)()
 ], MongoModule);
 exports.MongoModule = MongoModule;
 //# sourceMappingURL=mongoModule.js.map
