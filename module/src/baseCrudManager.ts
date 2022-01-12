@@ -208,7 +208,7 @@ export abstract class BaseCrudManager<K extends Schema> {
             let item = await this.model.findByIdAndUpdate(id, data as K & BaseCrudItem, options)
                 .exec();
 
-            if (item && (!isBaseCrud || !((item as Doc<IBaseCrudItem>).isDeleted))) {
+            if (item) {
                 await Promise.all([
                     this._itemUpdatedEvent.fireEventAsync({item: item as Doc<K>, previous}),
                     this._itemCreatedOrUpdatedEvent.fireEventAsync({item: item as Doc<K>, previous})

@@ -143,7 +143,7 @@ class BaseCrudManager {
             ]);
             let item = await this.model.findByIdAndUpdate(id, data, options)
                 .exec();
-            if (item && (!isBaseCrud || !(item.isDeleted))) {
+            if (item) {
                 await Promise.all([
                     this._itemUpdatedEvent.fireEventAsync({ item: item, previous }),
                     this._itemCreatedOrUpdatedEvent.fireEventAsync({ item: item, previous })
