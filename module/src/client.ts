@@ -34,15 +34,15 @@ export class Client implements IFactory<mongoose.Connection> {
 
             let connectionString = this.moduleOptions.connection;
 
-            let mongoOptions: mongoose.ConnectionOptions = {
+            let mongoOptions: mongoose.ConnectOptions = {
                 keepAlive: true,
-                useFindAndModify: false,
-                useNewUrlParser: true,
-                useCreateIndex: true,
+                //useFindAndModify: false,
+                //useNewUrlParser: true,
+                //useCreateIndex: true,
                 //autoReconnect: true,
                 // reconnectTries: Number.MAX_VALUE,
                 // reconnectInterval: 500,
-                useUnifiedTopology: true
+                //useUnifiedTopology: true
             };
 
             if (this.moduleOptions.config) {

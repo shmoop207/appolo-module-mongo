@@ -1,4 +1,4 @@
-import {ConnectionOptions, Schema, SchemaOptions, SchemaTypeOpts,PopulateOptions} from "mongoose";
+import {ConnectOptions, Schema, SchemaOptions,PopulateOptions} from "mongoose";
 
 export interface IBaseCrudItem {
     _id?: string,
@@ -27,5 +27,5 @@ export interface IOptions {
     useConnectionId?: string
     id?: string,
     exitOnDisconnect?: boolean
-    config?: ConnectionOptions
+    config?: ConnectOptions
 }

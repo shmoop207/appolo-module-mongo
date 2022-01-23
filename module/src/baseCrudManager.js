@@ -2,7 +2,6 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BaseCrudManager = void 0;
 const tslib_1 = require("tslib");
-const Q = require("bluebird");
 const __1 = require("../..");
 const inject_1 = require("@appolo/inject");
 const modelFactory_1 = require("./modelFactory");
@@ -71,7 +70,7 @@ class BaseCrudManager {
                     .countDocuments()
                     .exec();
             }
-            let { results, count } = await Q.props(promises);
+            let { results, count } = await utils_1.Promises.props(promises);
             return { results: results, count: count || results.length };
         }
         catch (e) {
@@ -237,7 +236,7 @@ class BaseCrudManager {
     }
     cloneNewDocument(doc) {
         let newDoc = this.cloneDocument(doc);
-        newDoc._id = __1.mongoose.Types.ObjectId();
+        newDoc._id = new __1.mongoose.Types.ObjectId();
         return doc;
     }
     get itemCreatedEvent() {

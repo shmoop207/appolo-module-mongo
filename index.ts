@@ -1,4 +1,4 @@
-import {ConnectionOptions} from "mongoose";
+import {ConnectOptions} from "mongoose";
 import {
     Doc,
     Model,
@@ -27,7 +27,7 @@ import {BaseCrudItem} from "./module/src/baseCrudItem";
 export import mongoose = require('mongoose');
 
 export {
-    ConnectionOptions, ModelRepository,
+    ConnectOptions, ModelRepository,
     Ref,
     staticMethod,
     virtual,

@@ -1,14 +1,13 @@
 "use strict";
-import Q = require('bluebird');
 import {BaseCrudItem, mongoose, Schema} from "../..";
 import {Doc, Model} from "appolo-mongo";
 import {inject} from "@appolo/inject";
 import {ILogger} from "@appolo/logger";
 import {IBaseCrudItem, CrudItemParams, GetAllParams} from "./interfaces";
 import {BaseCrudSymbol} from "./modelFactory";
-import {ModelUpdateOptions, Query, QueryOptions} from "mongoose";
+import { Query, QueryOptions} from "mongoose";
 import {Event, IEvent} from "@appolo/events";
-import {Objects,RecursivePartial} from "@appolo/utils";
+import {Objects,RecursivePartial,Promises} from "@appolo/utils";
 
 
 export abstract class BaseCrudManager<K extends Schema> {
@@ -103,7 +102,7 @@ export abstract class BaseCrudManager<K extends Schema> {
                     .exec();
             }
 
-            let {results, count} = await Q.props(promises);
+            let {results, count} = await Promises.props(promises);
 
             return {results: results as Doc<K>[], count: count || (results as Doc<K>[]).length};
         } catch
@@ -274,7 +273,7 @@ export abstract class BaseCrudManager<K extends Schema> {
 
     }
 
-    public async updateAll(query: CrudItemParams<K> | string | mongoose.Schema.Types.ObjectId, update: Partial<K>, options ?: ModelUpdateOptions): Promise<Doc<K> | void> {
+    public async updateAll(query: CrudItemParams<K> | string | mongoose.Schema.Types.ObjectId, update: Partial<K>, options ?: QueryOptions): Promise<Doc<K> | void> {
         try {
 
             if (this.model[BaseCrudSymbol]) {
@@ -338,7 +337,7 @@ export abstract class BaseCrudManager<K extends Schema> {
 
     public cloneNewDocument(doc: Doc<K>): Doc<K> {
         let newDoc = this.cloneDocument(doc);
-        newDoc._id = mongoose.Types.ObjectId();
+        newDoc._id = new mongoose.Types.ObjectId();
 
         return doc;
     }
