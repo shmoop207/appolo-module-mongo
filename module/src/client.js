@@ -30,6 +30,7 @@ let Client = class Client {
             if (this.moduleOptions.config) {
                 Object.assign(mongoOptions, this.moduleOptions.config);
             }
+            mongoose.set('strictQuery', false);
             mongoose.connection.on('disconnected', () => {
                 this.logger.error('disconnected from mongodb', { url: connectionString });
                 if (this.moduleOptions.exitOnDisconnect && this.env.type != "testing") {

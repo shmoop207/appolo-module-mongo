@@ -49,6 +49,9 @@ export class Client implements IFactory<mongoose.Connection> {
                 Object.assign(mongoOptions, this.moduleOptions.config);
             }
 
+            mongoose.set('strictQuery', false);
+
+
             mongoose.connection.on('disconnected', () => {
 
                 this.logger.error('disconnected from mongodb', {url: connectionString});
