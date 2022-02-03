@@ -6,6 +6,8 @@ const inject_1 = require("@appolo/inject");
 const engine_1 = require("@appolo/engine");
 const mongoose = require("mongoose");
 const ConnectionIdSymbol = Symbol("connectionId");
+mongoose.set('strictQuery', false);
+mongoose.set('strictPopulate', false);
 let Client = class Client {
     async get() {
         try {
@@ -40,7 +42,6 @@ let Client = class Client {
                 this.logger.info('reconnected to mongodb', { url: connectionString });
             });
             const connection = await mongoose.createConnection(connectionString, mongoOptions);
-            mongoose.set('strictQuery', false);
             if (this.moduleOptions.connectionId) {
                 connection[ConnectionIdSymbol] = this.moduleOptions.connectionId;
             }

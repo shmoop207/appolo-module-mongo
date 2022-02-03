@@ -8,6 +8,9 @@ import mongoose = require('mongoose');
 
 const ConnectionIdSymbol = Symbol("connectionId");
 
+mongoose.set('strictQuery', false);
+mongoose.set('strictPopulate' as any, false);
+
 @define()
 @singleton()
 @factory()
@@ -50,8 +53,6 @@ export class Client implements IFactory<mongoose.Connection> {
             }
 
 
-
-
             mongoose.connection.on('disconnected', () => {
 
                 this.logger.error('disconnected from mongodb', {url: connectionString});
@@ -69,7 +70,7 @@ export class Client implements IFactory<mongoose.Connection> {
 
             const connection = await mongoose.createConnection(connectionString, mongoOptions);
 
-            mongoose.set('strictQuery', false);
+
 
             if (this.moduleOptions.connectionId) {
                 connection[ConnectionIdSymbol] = this.moduleOptions.connectionId;
