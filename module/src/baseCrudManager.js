@@ -22,7 +22,7 @@ class BaseCrudManager {
     async findOne(params = {}) {
         try {
             let query = this.model
-                .findOne(params.filter || {});
+                .findOne(params.filter || {}).setOptions({ strictQuery: false });
             if (params.fields) {
                 query.select(params.fields);
             }
@@ -45,12 +45,12 @@ class BaseCrudManager {
     }
     async getAll(params = {}) {
         try {
-            let query = this.model.find({})
+            let query = this.model.find({}).setOptions({ strictQuery: false })
                 .select(params.fields || {});
             if (this.model[modelFactory_1.BaseCrudSymbol]) {
                 query.where('isDeleted', false);
             }
-            let p1 = query.where(params.filter || {})
+            let p1 = query.where(params.filter || {}).setOptions({ strictQuery: false })
                 .sort(params.sort || {})
                 .populate(params.populate || [])
                 .limit(params.pageSize || 0)
@@ -81,7 +81,7 @@ class BaseCrudManager {
     async findAll(options = {}) {
         try {
             let query = this.model
-                .find(options.filter || {})
+                .find(options.filter || {}).setOptions({ strictQuery: false })
                 .sort(options.sort || {})
                 .lean(options.lean);
             if (this.model[modelFactory_1.BaseCrudSymbol]) {

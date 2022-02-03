@@ -49,7 +49,7 @@ export class Client implements IFactory<mongoose.Connection> {
                 Object.assign(mongoOptions, this.moduleOptions.config);
             }
 
-            mongoose.set('strictQuery', false);
+
 
 
             mongoose.connection.on('disconnected', () => {
@@ -68,6 +68,8 @@ export class Client implements IFactory<mongoose.Connection> {
 
 
             const connection = await mongoose.createConnection(connectionString, mongoOptions);
+
+            mongoose.set('strictQuery', false);
 
             if (this.moduleOptions.connectionId) {
                 connection[ConnectionIdSymbol] = this.moduleOptions.connectionId;

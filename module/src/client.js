@@ -30,7 +30,6 @@ let Client = class Client {
             if (this.moduleOptions.config) {
                 Object.assign(mongoOptions, this.moduleOptions.config);
             }
-            mongoose.set('strictQuery', false);
             mongoose.connection.on('disconnected', () => {
                 this.logger.error('disconnected from mongodb', { url: connectionString });
                 if (this.moduleOptions.exitOnDisconnect && this.env.type != "testing") {
@@ -41,6 +40,7 @@ let Client = class Client {
                 this.logger.info('reconnected to mongodb', { url: connectionString });
             });
             const connection = await mongoose.createConnection(connectionString, mongoOptions);
+            mongoose.set('strictQuery', false);
             if (this.moduleOptions.connectionId) {
                 connection[ConnectionIdSymbol] = this.moduleOptions.connectionId;
             }

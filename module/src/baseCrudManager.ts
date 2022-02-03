@@ -36,7 +36,7 @@ export abstract class BaseCrudManager<K extends Schema> {
         try {
 
             let query = this.model
-                .findOne(params.filter as object || {});
+                .findOne(params.filter as object || {}).setOptions({ strictQuery: false });
 
             if (params.fields) {
                 query.select(params.fields);
@@ -69,7 +69,7 @@ export abstract class BaseCrudManager<K extends Schema> {
     public async getAll(params: GetAllParams<Partial<K>> = {}): Promise<{ results: Doc<K> [], count: number }> {
 
         try {
-            let query = this.model.find({})
+            let query = this.model.find({}).setOptions({ strictQuery: false })
                 .select(params.fields || {});
 
             if (this.model[BaseCrudSymbol]) {
@@ -77,7 +77,7 @@ export abstract class BaseCrudManager<K extends Schema> {
             }
 
 
-            let p1 = query.where(params.filter || {} as any)
+            let p1 = query.where(params.filter || {} as any).setOptions({ strictQuery: false })
                 .sort(params.sort || {})
                 .populate(params.populate || [])
                 .limit(params.pageSize || 0)
@@ -118,7 +118,7 @@ export abstract class BaseCrudManager<K extends Schema> {
         try {
 
             let query: Query<Doc<K>[], any> = this.model
-                .find(options.filter as object || {})
+                .find(options.filter as object || {}).setOptions({ strictQuery: false })
                 .sort(options.sort || {})
                 .lean(options.lean);
 
@@ -134,8 +134,7 @@ export abstract class BaseCrudManager<K extends Schema> {
 
             return items;
 
-        } catch
-            (e) {
+        } catch (e) {
             this.logger.error(`failed to findAll ${this.constructor.name}`, {e});
 
             throw e;
@@ -174,8 +173,7 @@ export abstract class BaseCrudManager<K extends Schema> {
             ]);
 
             return item;
-        } catch
-            (e) {
+        } catch (e) {
             this.logger.error(`${this.constructor.name} failed to create`, {e, data});
 
             throw e;
