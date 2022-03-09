@@ -69,7 +69,7 @@ export abstract class BaseCrudManager<K extends Schema> {
     public async getAll(params: GetAllParams<Partial<K>> = {}): Promise<{ results: Doc<K> [], count: number }> {
 
         try {
-            let query = this.model.find({}).setOptions({ strictQuery: false })
+            let query = this.model.find({})
                 .select(params.fields || {});
 
             if (this.model[BaseCrudSymbol]) {
@@ -77,12 +77,13 @@ export abstract class BaseCrudManager<K extends Schema> {
             }
 
 
-            let p1 = query.where(params.filter || {} as any).setOptions({ strictQuery: false })
+            let p1 = query.where(params.filter || {} as any)
                 .sort(params.sort || {})
                 .populate(params.populate || [])
                 .limit(params.pageSize || 0)
                 .lean(params.lean)
                 .skip((params.pageSize || 0) * ((params.page || 1) - 1))
+                .setOptions({ strictQuery: false })
                 .exec();
 
             let promises = {
@@ -98,6 +99,7 @@ export abstract class BaseCrudManager<K extends Schema> {
                 }
 
                 promises.count = query2.where(params.filter || {} as any)
+                    .setOptions({ strictQuery: false })
                     .countDocuments()
                     .exec();
             }

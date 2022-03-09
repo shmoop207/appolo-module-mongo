@@ -45,17 +45,18 @@ class BaseCrudManager {
     }
     async getAll(params = {}) {
         try {
-            let query = this.model.find({}).setOptions({ strictQuery: false })
+            let query = this.model.find({})
                 .select(params.fields || {});
             if (this.model[modelFactory_1.BaseCrudSymbol]) {
                 query.where('isDeleted', false);
             }
-            let p1 = query.where(params.filter || {}).setOptions({ strictQuery: false })
+            let p1 = query.where(params.filter || {})
                 .sort(params.sort || {})
                 .populate(params.populate || [])
                 .limit(params.pageSize || 0)
                 .lean(params.lean)
                 .skip((params.pageSize || 0) * ((params.page || 1) - 1))
+                .setOptions({ strictQuery: false })
                 .exec();
             let promises = {
                 results: p1,
@@ -67,6 +68,7 @@ class BaseCrudManager {
                     query2.where('isDeleted', false);
                 }
                 promises.count = query2.where(params.filter || {})
+                    .setOptions({ strictQuery: false })
                     .countDocuments()
                     .exec();
             }
