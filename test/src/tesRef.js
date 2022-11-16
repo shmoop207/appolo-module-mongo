@@ -13,11 +13,11 @@ var Test;
 })(Test || (Test = {}));
 let TesRef = class TesRef extends index_1.Schema {
 };
-(0, tslib_1.__decorate)([
+tslib_1.__decorate([
     (0, index_1.prop)({ type: String, enum: Test }),
-    (0, tslib_1.__metadata)("design:type", String)
+    tslib_1.__metadata("design:type", String)
 ], TesRef.prototype, "bla", void 0);
-TesRef = (0, tslib_1.__decorate)([
+TesRef = tslib_1.__decorate([
     (0, index_1.model)(),
     (0, index_1.schema)("TesRef", { strict: true })
 ], TesRef);

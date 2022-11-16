@@ -54,23 +54,23 @@ let Client = class Client {
         }
     }
 };
-(0, tslib_1.__decorate)([
+tslib_1.__decorate([
     (0, inject_1.inject)(),
-    (0, tslib_1.__metadata)("design:type", Object)
+    tslib_1.__metadata("design:type", Object)
 ], Client.prototype, "logger", void 0);
-(0, tslib_1.__decorate)([
+tslib_1.__decorate([
     (0, inject_1.inject)(),
-    (0, tslib_1.__metadata)("design:type", Object)
+    tslib_1.__metadata("design:type", Object)
 ], Client.prototype, "moduleOptions", void 0);
-(0, tslib_1.__decorate)([
+tslib_1.__decorate([
     (0, inject_1.inject)(),
-    (0, tslib_1.__metadata)("design:type", Object)
+    tslib_1.__metadata("design:type", Object)
 ], Client.prototype, "env", void 0);
-(0, tslib_1.__decorate)([
+tslib_1.__decorate([
     (0, inject_1.inject)(),
-    (0, tslib_1.__metadata)("design:type", engine_1.App)
+    tslib_1.__metadata("design:type", engine_1.App)
 ], Client.prototype, "app", void 0);
-Client = (0, tslib_1.__decorate)([
+Client = tslib_1.__decorate([
     (0, inject_1.define)(),
     (0, inject_1.singleton)(),
     (0, inject_1.factory)()

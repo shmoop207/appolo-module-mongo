@@ -9,11 +9,11 @@ let SomeManager = class SomeManager extends index_1.BaseCrudManager {
     test() {
     }
 };
-(0, tslib_1.__decorate)([
+tslib_1.__decorate([
     (0, index_1.model)(testModel_1.Test),
-    (0, tslib_1.__metadata)("design:type", Object)
+    tslib_1.__metadata("design:type", Object)
 ], SomeManager.prototype, "model", void 0);
-SomeManager = (0, tslib_1.__decorate)([
+SomeManager = tslib_1.__decorate([
     (0, inject_1.define)(),
     (0, inject_1.singleton)()
 ], SomeManager);

@@ -1,6 +1,6 @@
 {
   "name": "@appolo/mongo",
-  "version": "8.1.5",
+  "version": "8.1.6",
   "description": "appolo mongo module",
   "publishConfig": {
     "access": "public"
@@ -8,21 +8,21 @@
   "keywords": [],
   "main": "index.js",
   "dependencies": {
-    "@appolo/logger": "^8.0.6",
-    "@appolo/engine": "^8.0.23",
-    "appolo-mongo": "^8.1.0",
-    "@appolo/utils": "^8.0.31"
+    "@appolo/logger": "^8.1.2",
+    "@appolo/engine": "^8.0.24",
+    "appolo-mongo": "^8.1.1",
+    "@appolo/utils": "^8.0.41"
   },
   "devDependencies": {
-    "@types/node": "^17.0.21",
-    "@types/mocha": "^9.1.0",
-    "@types/chai": "^4.3.0",
-    "@types/sinon": "^10.0.11",
-    "@types/sinon-chai": "^3.2.8",
-    "typescript": "^4.6.2",
-    "chai": "^4.3.6",
-    "mocha": "^9.2.1",
-    "sinon": "^13.0.1",
+    "@types/node": "^18.11.9",
+    "@types/mocha": "^10.0.0",
+    "@types/chai": "^4.3.4",
+    "@types/sinon": "^10.0.13",
+    "@types/sinon-chai": "^3.2.9",
+    "typescript": "^4.9.3",
+    "chai": "^4.3.7",
+    "mocha": "^10.1.0",
+    "sinon": "^14.0.2",
     "sinon-chai": "^3.7.0"
   },
   "repository": {

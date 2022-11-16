@@ -51,7 +51,7 @@ export abstract class BaseCrudManager<K extends Schema> {
             }
 
             if (params.populate) {
-                query.populate(params.populate)
+                query.populate(params.populate as any)
             }
 
             let item = await query.exec();
@@ -79,7 +79,7 @@ export abstract class BaseCrudManager<K extends Schema> {
 
             let p1 = query.where(params.filter || {} as any)
                 .sort(params.sort || {})
-                .populate(params.populate || [])
+                .populate(params.populate as any || [])
                 .limit(params.pageSize || 0)
                 .lean(params.lean)
                 .skip((params.pageSize || 0) * ((params.page || 1) - 1))
@@ -106,7 +106,7 @@ export abstract class BaseCrudManager<K extends Schema> {
 
             let {results, count} = await Promises.props(promises);
 
-            return {results: results as Doc<K>[], count: count || (results as Doc<K>[]).length};
+            return {results: results as any[], count: count || (results as any[]).length};
         } catch
             (e) {
             this.logger.error(`${this.constructor.name} failed to getAll`, {e, params});
@@ -129,7 +129,7 @@ export abstract class BaseCrudManager<K extends Schema> {
             }
 
             if (options.populate) {
-                query.populate(options.populate)
+                query.populate(options.populate as any)
             }
 
             let items = await query.exec();

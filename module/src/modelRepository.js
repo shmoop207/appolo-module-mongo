@@ -13,15 +13,15 @@ let ModelRepository = class ModelRepository {
         return this.models[modelName];
     }
 };
-(0, tslib_1.__decorate)([
+tslib_1.__decorate([
     (0, inject_1.inject)(),
-    (0, tslib_1.__metadata)("design:type", mongoose.Connection)
+    tslib_1.__metadata("design:type", mongoose.Connection)
 ], ModelRepository.prototype, "client", void 0);
-(0, tslib_1.__decorate)([
+tslib_1.__decorate([
     (0, inject_1.alias)("IModels", "modelName"),
-    (0, tslib_1.__metadata)("design:type", Array)
+    tslib_1.__metadata("design:type", Array)
 ], ModelRepository.prototype, "models", void 0);
-ModelRepository = (0, tslib_1.__decorate)([
+ModelRepository = tslib_1.__decorate([
     (0, inject_1.define)(),
     (0, inject_1.singleton)()
 ], ModelRepository);
