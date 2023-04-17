@@ -68,7 +68,7 @@ export class Client implements IFactory<mongoose.Connection> {
             });
 
 
-            const connection = await mongoose.createConnection(connectionString, mongoOptions);
+            const connection = await mongoose.createConnection(connectionString, mongoOptions).asPromise();
 
 
 

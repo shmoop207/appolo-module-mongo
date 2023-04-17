@@ -41,7 +41,7 @@ let Client = class Client {
             mongoose.connection.on('reconnected', () => {
                 this.logger.info('reconnected to mongodb', { url: connectionString });
             });
-            const connection = await mongoose.createConnection(connectionString, mongoOptions);
+            const connection = await mongoose.createConnection(connectionString, mongoOptions).asPromise();
             if (this.moduleOptions.connectionId) {
                 connection[ConnectionIdSymbol] = this.moduleOptions.connectionId;
             }
