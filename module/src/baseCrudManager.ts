@@ -5,9 +5,9 @@ import {inject} from "@appolo/inject";
 import {ILogger} from "@appolo/logger";
 import {IBaseCrudItem, CrudItemParams, GetAllParams} from "./interfaces";
 import {BaseCrudSymbol} from "./modelFactory";
-import { Query, QueryOptions} from "mongoose";
+import {Query, QueryOptions} from "mongoose";
 import {Event, IEvent} from "@appolo/events";
-import {Objects,RecursivePartial,Promises} from "@appolo/utils";
+import {Objects, RecursivePartial, Promises} from "@appolo/utils";
 
 
 export abstract class BaseCrudManager<K extends Schema> {
@@ -16,8 +16,16 @@ export abstract class BaseCrudManager<K extends Schema> {
     @inject() protected logger: ILogger;
 
     protected readonly _beforeItemCreateEvent = new Event<{ data: RecursivePartial<K> }>({await: true});
-    protected readonly _beforeItemUpdateEvent = new Event<{ id: string, data: RecursivePartial<K>, previous: Doc<K> }>({await: true});
-    protected readonly _beforeItemCreateOrUpdateEvent = new Event<{ id?: string, data: RecursivePartial<K>, previous?: Doc<K> }>({await: true});
+    protected readonly _beforeItemUpdateEvent = new Event<{
+        id: string,
+        data: RecursivePartial<K>,
+        previous: Doc<K>
+    }>({await: true});
+    protected readonly _beforeItemCreateOrUpdateEvent = new Event<{
+        id?: string,
+        data: RecursivePartial<K>,
+        previous?: Doc<K>
+    }>({await: true});
 
     protected readonly _itemCreatedEvent = new Event<{ item: Doc<K> }>({await: true});
     protected readonly _itemCreatedOrUpdatedEvent = new Event<{ item: Doc<K>, previous?: Doc<K> }>({await: true});
@@ -36,7 +44,7 @@ export abstract class BaseCrudManager<K extends Schema> {
         try {
 
             let query = this.model
-                .findOne(params.filter as object || {}).setOptions({ strictQuery: false });
+                .findOne(params.filter as object || {}).setOptions({strictQuery: false});
 
             if (params.fields) {
                 query.select(params.fields);
@@ -83,7 +91,7 @@ export abstract class BaseCrudManager<K extends Schema> {
                 .limit(params.pageSize || 0)
                 .lean(params.lean)
                 .skip((params.pageSize || 0) * ((params.page || 1) - 1))
-                .setOptions({ strictQuery: false })
+                .setOptions({strictQuery: false})
                 .exec();
 
             let promises = {
@@ -99,7 +107,7 @@ export abstract class BaseCrudManager<K extends Schema> {
                 }
 
                 promises.count = query2.where(params.filter || {} as any)
-                    .setOptions({ strictQuery: false })
+                    .setOptions({strictQuery: false})
                     .countDocuments()
                     .exec();
             }
@@ -115,12 +123,36 @@ export abstract class BaseCrudManager<K extends Schema> {
         }
     }
 
+    public async countAll(params: { filter?: string | CrudItemParams<K> } = {}): Promise<{ count: number }> {
+
+        try {
+
+            let query = this.model.find({});
+
+            if (this.model[BaseCrudSymbol]) {
+                query.where('isDeleted', false)
+            }
+
+            let count = await query.where(params.filter || {} as any)
+                .setOptions({strictQuery: false})
+                .countDocuments()
+                .exec();
+
+            return {count};
+        } catch
+            (e) {
+            this.logger.error(`${this.constructor.name} failed to countAll`, {e, params});
+
+            throw e;
+        }
+    }
+
     public async findAll(options: Omit<GetAllParams<Partial<K>>, "page" | "pageSize"> = {}): Promise<Doc<K> []> {
 
         try {
 
             let query: Query<Doc<K>[], any> = this.model
-                .find(options.filter as object || {}).setOptions({ strictQuery: false })
+                .find(options.filter as object || {}).setOptions({strictQuery: false})
                 .sort(options.sort || {})
                 .lean(options.lean);
 
@@ -165,7 +197,7 @@ export abstract class BaseCrudManager<K extends Schema> {
                 this._beforeItemCreateOrUpdateEvent.fireEventAsync({data})
             ]);
 
-            let model:Doc<K> = new this.model(data as any);
+            let model: Doc<K> = new this.model(data as any);
 
             let item = await model.save();
 
@@ -362,7 +394,11 @@ export abstract class BaseCrudManager<K extends Schema> {
         return this._beforeItemUpdateEvent;
     }
 
-    public get beforeItemCreatedOrUpdatedEvent(): IEvent<{ id?: string, data: RecursivePartial<K>, previous?: Doc<K> }> {
+    public get beforeItemCreatedOrUpdatedEvent(): IEvent<{
+        id?: string,
+        data: RecursivePartial<K>,
+        previous?: Doc<K>
+    }> {
         return this._beforeItemCreateOrUpdateEvent;
     }
 

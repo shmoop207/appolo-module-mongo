@@ -80,6 +80,23 @@ class BaseCrudManager {
             throw e;
         }
     }
+    async countAll(params = {}) {
+        try {
+            let query = this.model.find({});
+            if (this.model[modelFactory_1.BaseCrudSymbol]) {
+                query.where('isDeleted', false);
+            }
+            let count = await query.where(params.filter || {})
+                .setOptions({ strictQuery: false })
+                .countDocuments()
+                .exec();
+            return { count };
+        }
+        catch (e) {
+            this.logger.error(`${this.constructor.name} failed to countAll`, { e, params });
+            throw e;
+        }
+    }
     async findAll(options = {}) {
         try {
             let query = this.model
